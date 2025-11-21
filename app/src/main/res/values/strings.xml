@@ -1,8 +1,0 @@
-<resources>
-    <string name="app_name">LMHYMV.android</string>
-    <string name="naver_client_id">s9gsIPhonzWI06aI8h2k</string>
-    <string name="naver_client_secret">HFkVAxNRNy</string>
-    <string name="naver_client_name">HYMV</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-</resources>
