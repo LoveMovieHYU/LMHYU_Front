@@ -10,7 +10,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.lmhymvandroid.DTO.AuthResponse;
+import com.example.lmhymvandroid.DTO.LoginResponseDTO;
 import com.example.lmhymvandroid.DTO.GoogleLoginRequest;
 import com.example.lmhymvandroid.DTO.NaverLoginRequest;
 import com.example.lmhymvandroid.R;
@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         tokenManager = new TokenManager(this);
-        authService = RetrofitClient.getClient().create(AuthService.class);
+        authService = RetrofitClient.getClient(this).create(AuthService.class);
 
         // ================== 구글 로그인 설정 ==================
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -107,10 +107,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendNaverTokenToBackend(String accessToken) {
-        Call<AuthResponse> call = authService.requestNaverLogin(new NaverLoginRequest(accessToken));
-        call.enqueue(new Callback<AuthResponse>() {
+        Call<LoginResponseDTO> call = authService.requestNaverLogin(new NaverLoginRequest(accessToken));
+        call.enqueue(new Callback<LoginResponseDTO>() {
             @Override
-            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+            public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     handleSuccessfulLogin(response.body());
                 } else {
@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<AuthResponse> call, Throwable t) {
+            public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
                 Log.e("Backend", "네이버 API 호출 실패", t);
             }
         });
@@ -172,10 +172,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void sendTokensToBackend(String idToken, String accessToken) {
-        Call<AuthResponse> call = authService.requestGoogleLogin(new GoogleLoginRequest(idToken, accessToken));
-        call.enqueue(new Callback<AuthResponse>() {
+        Call<LoginResponseDTO> call = authService.requestGoogleLogin(new GoogleLoginRequest(idToken, accessToken));
+        call.enqueue(new Callback<LoginResponseDTO>() {
             @Override
-            public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
+            public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     handleSuccessfulLogin(response.body());
                 } else {
@@ -183,19 +183,31 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<AuthResponse> call, Throwable t) {
+            public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
                 Log.e("Backend", "구글 API 호출 실패", t);
             }
         });
     }
 
     /**
-     * ## 로그인 성공 시 공통 처리 로직 ##
+     * ## 로그인 성공 시 공통 처리 로직  ##
      */
-    private void handleSuccessfulLogin(AuthResponse authResponse) {
-        tokenManager.saveTokens(authResponse.getAccessToken(), authResponse.getRefreshToken());
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
+    private void handleSuccessfulLogin(LoginResponseDTO loginResponse) {
+        tokenManager.saveTokens(
+                loginResponse.getAccessToken(),
+                loginResponse.getRefreshToken(),
+                loginResponse.getUserId()
+        );
+
+        if (loginResponse.isNewUser()) {
+            Intent intent = new Intent(LoginActivity.this, CreateNicknameActivity.class);
+            intent.putExtra("USER_ID", loginResponse.getUserId());
+            startActivity(intent);
+        } else {
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+
+        finishAffinity();
     }
 }

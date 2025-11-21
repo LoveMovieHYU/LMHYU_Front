@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(R.layout.activity_main);
 
         tokenManager = new TokenManager(this);
-        authService = RetrofitClient.getClient().create(AuthService.class);
+        authService = RetrofitClient.getClient(this).create(AuthService.class);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnItemSelectedListener(this);

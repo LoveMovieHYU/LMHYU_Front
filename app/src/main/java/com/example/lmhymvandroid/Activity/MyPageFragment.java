@@ -1,13 +1,16 @@
 package com.example.lmhymvandroid.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import com.example.lmhymvandroid.R;
 
 public class MyPageFragment extends Fragment {
@@ -21,11 +24,18 @@ public class MyPageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         Button logoutButton = view.findViewById(R.id.logout_button);
         logoutButton.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).logout();
             }
+        });
+
+        Button editProfileButton = view.findViewById(R.id.edit_profile_button);
+        editProfileButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
+            startActivity(intent);
         });
     }
 }
