@@ -79,4 +79,6 @@ dependencies {
     implementation("androidx.security:security-crypto:1.0.0")
     // 네이버 로그인 SDK 추가
     implementation("com.navercorp.nid:oauth:5.9.0")
+
+    implementation("com.github.bumptech.glide:glide:4.15.1")
 }
