@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             return true;
 
         } else if (itemId == R.id.nav_mypage) {
-            replaceFragment(new MyPageFragment());
+            replaceFragment(new com.example.lmhymvandroid.Activity.RecordFragment());
             return true;
         }
 
