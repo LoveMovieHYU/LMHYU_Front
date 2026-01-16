@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // ================== 구글 로그인 설정 ==================
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
+                .requestIdToken("1074341961582-k33rd3m6ndmuio1msva4k77vo936pmlt.apps.googleusercontent.com")
                 .requestEmail()
                 .requestScopes(
                         new Scope("https://www.googleapis.com/auth/profile.agerange.read"),
@@ -204,7 +204,8 @@ public class LoginActivity extends AppCompatActivity {
             intent.putExtra("USER_ID", loginResponse.getUserId());
             startActivity(intent);
         } else {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, EmotionSelectionActivity.class);
             startActivity(intent);
         }
 

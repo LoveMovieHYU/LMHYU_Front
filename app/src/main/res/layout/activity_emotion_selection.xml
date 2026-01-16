@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="40dp"
+        android:text="오늘의 감정은 어떤가요?"
+        android:textColor="#333333"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:columnCount="2"
+        android:rowCount="4">
+
+        <LinearLayout android:id="@+id/btn_happy" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="😊" />
+            <TextView style="@style/EmotionTextStyle" android:text="행복해요" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/btn_sad" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="😢" />
+            <TextView style="@style/EmotionTextStyle" android:text="슬퍼요" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/btn_angry" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="😡" />
+            <TextView style="@style/EmotionTextStyle" android:text="화나요" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/btn_anxious" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="😰" />
+            <TextView style="@style/EmotionTextStyle" android:text="불안해요" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/btn_tired" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="😫" />
+            <TextView style="@style/EmotionTextStyle" android:text="지쳐요" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/btn_thinking" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="🤔" />
+            <TextView style="@style/EmotionTextStyle" android:text="생각중" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/btn_relaxed" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="😎" />
+            <TextView style="@style/EmotionTextStyle" android:text="여유로워요" />
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/btn_depressed" style="@style/EmotionCardStyle">
+            <TextView style="@style/EmotionEmojiStyle" android:text="😔" />
+            <TextView style="@style/EmotionTextStyle" android:text="우울해요" />
+        </LinearLayout>
+
+    </GridLayout>
+
+    <Button
+        android:id="@+id/btn_submit"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginBottom="20dp"
+        android:backgroundTint="#1A237E"
+        android:text="선택 완료"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+</LinearLayout>

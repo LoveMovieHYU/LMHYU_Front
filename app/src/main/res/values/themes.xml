@@ -3,4 +3,30 @@
     <style name="Theme.LMHYMVandroid" parent="Theme.MaterialComponents.DayNight.NoActionBar">
     </style>
 
+    <style name="EmotionCardStyle">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">100dp</item>
+        <item name="android:layout_columnWeight">1</item>
+        <item name="android:layout_margin">8dp</item>
+        <item name="android:background">@drawable/emotion_card_selector</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="EmotionEmojiStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
+    <style name="EmotionTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">4dp</item>
+        <item name="android:textColor">#555555</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>
