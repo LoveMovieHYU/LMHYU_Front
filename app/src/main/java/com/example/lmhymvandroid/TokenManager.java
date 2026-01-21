@@ -40,6 +40,13 @@ public class TokenManager {
         editor.commit();
     }
 
+    public void updateTokens(String accessToken, String refreshToken) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("access_token", accessToken);
+        editor.putString("refresh_token", refreshToken);
+        editor.apply();
+    }
+
     public String getAccessToken() {
         return sharedPreferences.getString(KEY_ACCESS_TOKEN, null);
     }

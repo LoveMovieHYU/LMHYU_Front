@@ -106,5 +106,16 @@
             android:nestedScrollingEnabled="false"
             android:layout_marginTop="10dp"/>
 
+        <Button
+            android:id="@+id/btnLogout"
+            android:text="로그아웃"
+            android:textColor="#FF0000"
+            android:backgroundTint="#FFFFFF"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="?android:attr/borderlessButtonStyle"/>
     </LinearLayout>
+
 </androidx.core.widget.NestedScrollView>

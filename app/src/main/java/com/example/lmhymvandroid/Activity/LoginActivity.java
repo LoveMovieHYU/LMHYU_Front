@@ -1,49 +1,19 @@
 package com.example.lmhymvandroid.Activity;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.lmhymvandroid.DTO.GoogleLoginRequest;
-import com.example.lmhymvandroid.DTO.LoginResponseDTO;
-import com.example.lmhymvandroid.DTO.NaverLoginRequest;
 import com.example.lmhymvandroid.R;
-import com.example.lmhymvandroid.RetrofitClient;
-import com.example.lmhymvandroid.Service.AuthService;
 import com.example.lmhymvandroid.TokenManager;
-import com.google.android.gms.auth.GoogleAuthUtil;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Scope;
-import com.google.android.gms.tasks.Task;
-import com.navercorp.nid.NaverIdLoginSDK;
-import com.navercorp.nid.oauth.OAuthLoginCallback;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private GoogleSignInClient mGoogleSignInClient;
-    private ActivityResultLauncher<Intent> mGoogleSignInLauncher;
     private TokenManager tokenManager;
-    private AuthService authService;
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,163 +21,74 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         tokenManager = new TokenManager(this);
-        authService = RetrofitClient.getClient(this).create(AuthService.class);
 
-        // ================== 구글 로그인 설정 ==================
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.server_client_id))
-                .requestEmail()
-                .requestScopes(
-                        new Scope("https://www.googleapis.com/auth/profile.agerange.read"),
-                        new Scope("https://www.googleapis.com/auth/user.gender.read")
-                )
-                .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        mGoogleSignInLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(result.getData());
-                        handleSignInResult(task);
-                    }
-                });
-        SignInButton googleSignInButton = findViewById(R.id.sign_in_button);
-        googleSignInButton.setOnClickListener(v -> signIn());
-
-
-        // ================== 네이버 로그인 설정 ==================
-        NaverIdLoginSDK.INSTANCE.initialize(this,
-                getString(R.string.naver_client_id),
-                getString(R.string.naver_client_secret),
-                getString(R.string.naver_client_name));
-
-        View naverLoginButton = findViewById(R.id.button_naver_login);
-        naverLoginButton.setOnClickListener(v -> startNaverLogin());
-    }
-
-    private void startNaverLogin() {
-        OAuthLoginCallback oauthLoginCallback = new OAuthLoginCallback() {
-            @Override
-            public void onSuccess() {
-                String accessToken = NaverIdLoginSDK.INSTANCE.getAccessToken();
-                sendNaverTokenToBackend(accessToken);
-            }
-
-            @Override
-            public void onFailure(int httpStatus, String message) {
-                Log.e("NaverLogin", "로그인 실패: " + message);
-            }
-
-            @Override
-            public void onError(int errorCode, String message) {
-                onFailure(errorCode, message);
-            }
-        };
-        NaverIdLoginSDK.INSTANCE.authenticate(this, oauthLoginCallback);
-    }
-
-    private void sendNaverTokenToBackend(String accessToken) {
-        Call<LoginResponseDTO> call = authService.requestNaverLogin(new NaverLoginRequest(accessToken));
-        call.enqueue(new Callback<LoginResponseDTO>() {
-            @Override
-            public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    handleSuccessfulLogin(response.body());
-                } else {
-                    Log.e("Backend", "네이버 로그인 실패: " + response.message());
-                }
-            }
-            @Override
-            public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
-                Log.e("Backend", "네이버 API 호출 실패", t);
-            }
+        // 구글 로그인 버튼
+        findViewById(R.id.sign_in_button).setOnClickListener(v -> {
+            String backendUrl = "http://10.0.2.2.nip.io:8080/oauth2/authorization/google";
+            openWebBrowser(backendUrl);
         });
+
+        // 네이버 로그인 버튼
+        findViewById(R.id.button_naver_login).setOnClickListener(v -> {
+            String backendUrl = "http://10.0.2.2:8080/oauth2/authorization/naver";
+            openWebBrowser(backendUrl);
+        });
+
+        // 3. (앱 처음 실행 시) 리다이렉트로 들어왔는지 확인
+        handleDeepLink(getIntent());
     }
 
-
-    // --- 구글 로그인 관련 메소드 ---
-    private void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        mGoogleSignInLauncher.launch(signInIntent);
+    // 4. (이미 켜진 앱으로 돌아올 때) 리다이렉트 확인
+    // AndroidManifest의 launchMode="singleTask" 덕분에 이 함수가 호출됨
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent); // 새 인텐트로 교체
+        handleDeepLink(intent);
     }
 
-    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+    // 웹 브라우저 실행 함수
+    private void openWebBrowser(String url) {
         try {
-            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            String idToken = account.getIdToken();
-
-            if (idToken == null) {
-                Log.e("GoogleSignIn", "ID Token is null. 로그인 실패.");
-                return;
-            }
-
-            getAccessTokenInBackground(account, idToken);
-
-        } catch (ApiException e) {
-            Log.w("GoogleSignIn", "signInResult:failed code=" + e.getStatusCode());
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+        } catch (Exception e) {
+            Toast.makeText(this, "브라우저를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
+    // ★ 핵심: URL에서 토큰 뜯어내기
+    private void handleDeepLink(Intent intent) {
+        Uri data = intent.getData();
 
-    private void getAccessTokenInBackground(GoogleSignInAccount account, String idToken) {
+        // 데이터가 있고, 우리가 설정한 example-app://callback 이 맞는지 확인
+        if (data != null && "example-app".equals(data.getScheme()) && "callback".equals(data.getHost())) {
 
-        String scope = "oauth2:" + "https://www.googleapis.com/auth/profile.agerange.read" + " " + "https://www.googleapis.com/auth/user.gender.read";
+            Log.d("Login", "리다이렉트 URL 감지: " + data.toString());
 
-        executor.execute(() -> {
-            try {
-                String accessToken = GoogleAuthUtil.getToken(
-                        LoginActivity.this,
-                        account.getAccount(),
-                        scope
-                );
+            // 백엔드가 보내준 쿼리 파라미터 이름("accessToken", "refreshToken")으로 값 추출
+            String accessToken = data.getQueryParameter("accessToken");
+            String refreshToken = data.getQueryParameter("refreshToken");
 
-                runOnUiThread(() -> {
-                    sendTokensToBackend(idToken, accessToken);
-                });
+            if (accessToken != null && refreshToken != null) {
+                Log.d("MY_TOKEN_CHECK", "✅ Access Token: " + accessToken);
+                Log.d("MY_TOKEN_CHECK", "✅ Refresh Token: " + refreshToken);
+                Log.d("Login", "로그인 성공! 토큰 획득 완료");
 
-            } catch (Exception e) {
-                Log.e("GoogleSignIn", "getAccessTokenInBackground: accessToken 획득 실패", e);
+                // 1. 토큰 저장 (TokenManager 사용)
+                // (userId가 필요한 경우 백엔드에서 param으로 같이 넘겨달라고 하거나, 0으로 임시 저장 후 /me API 호출)
+                tokenManager.saveTokens(accessToken, refreshToken, 0);
+
+                // 2. 메인 화면으로 이동
+                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                // 뒤로가기 눌렀을 때 로그인 화면 다시 안 나오게 플래그 설정
+                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(mainIntent);
+                finish();
+            } else {
+                Log.e("Login", "토큰이 URL에 없습니다.");
+                Toast.makeText(this, "로그인 정보 수신 실패", Toast.LENGTH_SHORT).show();
             }
-        });
-    }
-
-    private void sendTokensToBackend(String idToken, String accessToken) {
-        Call<LoginResponseDTO> call = authService.requestGoogleLogin(new GoogleLoginRequest(idToken, accessToken));
-        call.enqueue(new Callback<LoginResponseDTO>() {
-            @Override
-            public void onResponse(Call<LoginResponseDTO> call, Response<LoginResponseDTO> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    handleSuccessfulLogin(response.body());
-                } else {
-                    Log.e("Backend", "구글 로그인 실패: " + response.message());
-                }
-            }
-            @Override
-            public void onFailure(Call<LoginResponseDTO> call, Throwable t) {
-                Log.e("Backend", "구글 API 호출 실패", t);
-            }
-        });
-    }
-
-    /**
-     * ## 로그인 성공 시 공통 처리 로직  ##
-     */
-    private void handleSuccessfulLogin(LoginResponseDTO loginResponse) {
-        tokenManager.saveTokens(
-                loginResponse.getAccessToken(),
-                loginResponse.getRefreshToken(),
-                loginResponse.getUserId()
-        );
-
-        if (loginResponse.isNewUser()) {
-            Intent intent = new Intent(LoginActivity.this, CreateNicknameActivity.class);
-            intent.putExtra("USER_ID", loginResponse.getUserId());
-            startActivity(intent);
-        } else {
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
         }
-
-        finishAffinity();
     }
 }
