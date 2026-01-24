@@ -1,9 +1,8 @@
 package com.example.lmhymvandroid.Service;
 
-import com.example.lmhymvandroid.DTO.EmotionRequest;
-import com.example.lmhymvandroid.DTO.EmotionResponse;
 import com.example.lmhymvandroid.DTO.HomeResponse;
 import com.example.lmhymvandroid.DTO.MovieDetailResponse;
+import com.example.lmhymvandroid.DTO.MovieSearchDTO;
 import com.example.lmhymvandroid.DTO.ReactionRequest;
 import com.example.lmhymvandroid.DTO.RecommendationResponse;
 
@@ -20,14 +19,6 @@ public interface MovieApiService {
     @GET("/api/movies/home") // 백엔드 API 엔드포인트
     Call<HomeResponse> getHomeData();
 
-    // 오늘 감정 선택 여부 확인 (GET)
-    @GET("/api/emotions/today")
-    Call<EmotionResponse> checkTodayEmotion();
-
-    // 감정 저장 (POST)
-    @POST("/api/emotions/today")
-    Call<Void> saveTodayEmotion(@Body EmotionRequest request);
-
     // 기존 MovieApiService 인터페이스 안에 추가
     @GET("/api/movies/{movieId}")
     Call<MovieDetailResponse> getMovieDetail(@Path("movieId") Long movieId);
@@ -41,9 +32,16 @@ public interface MovieApiService {
     );
 
     // 2. 좋아요/싫어요 반응 보내기
-    @POST("/api/movies/{movieId}/reaction")
+    @POST("/api/feedback/{movieId}/reaction")
     Call<Void> sendReaction(
             @Path("movieId") Long movieId,
             @Body ReactionRequest request
+    );
+
+    // API 명세: GET /api/movies/search?keyword={keyword}&page={page}
+    @GET("/api/movies/search")
+    Call<List<MovieSearchDTO>> searchMovies(
+            @Query("keyword") String keyword,
+            @Query("page") int page
     );
 }
