@@ -49,7 +49,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.MainActivity" />
-        <activity android:name=".Activity.EmotionSelectionActivity" />
         <activity android:name=".Activity.MovieDetailActivity" />
     </application>
 
