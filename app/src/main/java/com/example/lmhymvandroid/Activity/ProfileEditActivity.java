@@ -28,9 +28,9 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     private AuthService authService;
     private TokenManager tokenManager;
-    private int currentUserId;
+    private long currentUserId;
     private EditText nicknameEditText;
-    private Button saveButton; //
+    private Button saveButton;
 
     private static final Pattern NICKNAME_PATTERN =
             Pattern.compile("^[a-zA-Z0-9가-힣]*$");
@@ -49,8 +49,8 @@ public class ProfileEditActivity extends AppCompatActivity {
             return;
         }
 
-        nicknameEditText = findViewById(R.id.editTextNickname); // ◀ xml에 필요
-        saveButton = findViewById(R.id.buttonSaveChanges); // ◀ xml에 필요
+        nicknameEditText = findViewById(R.id.editTextNickname);
+        saveButton = findViewById(R.id.buttonSaveChanges);
 
 
         saveButton.setOnClickListener(v -> {
@@ -89,8 +89,8 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void requestUpdateNickname(String nickname) {
-        NicknameUpdateRequest request = new NicknameUpdateRequest(nickname);
-        Call<Void> call = authService.updateNickname(currentUserId, request);
+        NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, null);
+        Call<Void> call = authService.updateUserInfo(request);;
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -109,14 +109,13 @@ public class ProfileEditActivity extends AppCompatActivity {
         });
     }
 
-    // ◀ CreateNicknameActivity의 handleApiError 메소드를 그대로 복사
     private void handleApiError(Response<?> response) {
         try {
             String errorBodyString = response.errorBody().string();
             Gson gson = new GsonBuilder().create();
 
 
-            if (response.code() == 400) { // 유효성 검사 또는 동일 닉네임
+            if (response.code() == 400) {
                 if (errorBodyString != null && errorBodyString.contains("same")) {
                     nicknameEditText.setError("현재 닉네임과 동일합니다.");
                 } else {

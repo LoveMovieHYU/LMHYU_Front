@@ -1,23 +1,31 @@
-// com/example/lmhymvandroid/Activity/CreateNicknameActivity.java
 package com.example.lmhymvandroid.Activity;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
-import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.lmhymvandroid.DTO.ErrorResponse;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,45 +34,124 @@ import retrofit2.Response;
 public class CreateNicknameActivity extends AppCompatActivity {
 
     private AuthService authService;
-    private int currentUserId;
     private EditText nicknameEditText;
+    private TextView textViewBirthdate;
     private Button completeButton;
+    private ImageView buttonCalendar;
+    private CardView calendarCardView;
+    private MaterialCalendarView calendarView;
+    private String selectedDate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_nickname);
+
         authService = RetrofitClient.getClient(this).create(AuthService.class);
+        initViews();
+        setupCalendarLogic();
+        String missingField = getIntent().getStringExtra("MISSING_FIELD");
+        handleMissingField(missingField);
+    }
 
-        currentUserId = getIntent().getIntExtra("USER_ID", -1);
-        if (currentUserId == -1) {
-            Toast.makeText(this, "오류: 사용자 정보 없음", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
+    private void handleMissingField(String field) {
+        if (field == null) return;
+
+        if (field.contains("NICKNAME")) {
+            nicknameEditText.requestFocus();
+            Toast.makeText(this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+        } else if (field.contains("BIRTHDATE")) {
+            Toast.makeText(this, "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private void initViews() {
         nicknameEditText = findViewById(R.id.editTextNickname);
-        completeButton = findViewById(R.id.buttonSubmitNickname);
+        textViewBirthdate = findViewById(R.id.textViewBirthdate);
+        buttonCalendar = findViewById(R.id.buttonCalendar);
+        completeButton = findViewById(R.id.buttonSubmit);
+        calendarCardView = findViewById(R.id.calendarCardView);
+        calendarView = findViewById(R.id.calendarView);
+
+        buttonCalendar.setOnClickListener(v -> {
+            int visibility = (calendarCardView.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE;
+            calendarCardView.setVisibility(visibility);
+        });
 
         completeButton.setOnClickListener(v -> {
             String nickname = nicknameEditText.getText().toString().trim();
-            if (nickname.isEmpty()) {
-                nicknameEditText.setError("닉네임을 입력하세요.");
-                return;
-            }
-            requestUpdateNickname(nickname);
+            if (!validateInput(nickname)) return;
+            requestUpdateUserInfo(nickname, selectedDate);
         });
     }
 
-    private void requestUpdateNickname(String nickname) {
-        NicknameUpdateRequest request = new NicknameUpdateRequest(nickname);
+    private void setupCalendarLogic() {
+        calendarView.setTitleFormatter(day ->
+                String.format(Locale.KOREA, "%d년 %02d월", day.getYear(), day.getMonth() + 1));
 
-        Call<Void> call = authService.updateNickname(currentUserId, request);
-        call.enqueue(new Callback<Void>() {
+        calendarView.setOnTitleClickListener(view -> {
+            Calendar c = Calendar.getInstance();
+            CalendarDay current = calendarView.getCurrentDate();
+            DatePickerDialog dialog = new DatePickerDialog(this, (datePicker, year, month, day) -> {
+                calendarView.setCurrentDate(CalendarDay.from(year, month, 1));
+            }, current.getYear(), current.getMonth(), 1);
+            dialog.setTitle("이동할 연도와 월을 선택하세요");
+            dialog.show();
+        });
+
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            updateDateDisplay(date.getYear(), date.getMonth(), date.getDay());
+            calendarCardView.setVisibility(View.GONE);
+        });
+
+        findViewById(R.id.btnCalendarToday).setOnClickListener(v -> {
+            Calendar today = Calendar.getInstance();
+            calendarView.setCurrentDate(today);
+            calendarView.setSelectedDate(today);
+            updateDateDisplay(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+        });
+
+        findViewById(R.id.btnCalendarDelete).setOnClickListener(v -> {
+            selectedDate = "";
+            textViewBirthdate.setText("YYYY-MM-DD");
+            textViewBirthdate.setTextColor(Color.parseColor("#BBBBBB"));
+            calendarCardView.setVisibility(View.GONE);
+        });
+    }
+
+    private void updateDateDisplay(int year, int month, int day) {
+        selectedDate = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month + 1, day);
+        textViewBirthdate.setText(selectedDate);
+        textViewBirthdate.setTextColor(Color.BLACK);
+        completeButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4A4A8A")));
+        completeButton.setTextColor(Color.WHITE);
+    }
+
+    private boolean validateInput(String nickname) {
+        if (nickname.isEmpty()) {
+            nicknameEditText.setError("닉네임을 입력해주세요.");
+            return false;
+        }
+        if (nickname.length() < 2) {
+            nicknameEditText.setError("닉네임은 최소 2자 이상이어야 합니다.");
+            return false;
+        }
+        if (selectedDate.isEmpty()) {
+            Toast.makeText(this, "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
+    private void requestUpdateUserInfo(String nickname, String birthdate) {
+        Log.d("LMHYU_LOG", "API 요청 시작: " + nickname + ", " + birthdate);
+        NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, birthdate);
+
+        authService.updateUserInfo(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(CreateNicknameActivity.this, "환영합니다!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateNicknameActivity.this, "설정이 완료되었습니다!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(CreateNicknameActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -76,41 +163,26 @@ public class CreateNicknameActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(CreateNicknameActivity.this, "네트워크 오류", Toast.LENGTH_SHORT).show();
+                Log.e("LMHYU_LOG", "네트워크 에러: " + t.getMessage());
+                Toast.makeText(CreateNicknameActivity.this, "서버 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void handleApiError(Response<?> response) {
         try {
-            String errorBodyString = response.errorBody().string();
-            Gson gson = new GsonBuilder().create();
+            String errorJson = response.errorBody() != null ? response.errorBody().string() : "";
+            Log.e("LMHYU_LOG", "에러 상세: " + errorJson);
 
-
-            if (response.code() == 400) {
-
-                // 1. "동일 닉네임" 오류인지 먼저 확인
-                if (errorBodyString != null && errorBodyString.contains("same")) {
-                    nicknameEditText.setError("현재 닉네임과 동일합니다."); //
-
-                } else {
-                    ErrorResponse errorResponse = gson.fromJson(errorBodyString, ErrorResponse.class);
-                    if (errorResponse != null && errorResponse.getNewNickname() != null) {
-                        nicknameEditText.setError(errorResponse.getNewNickname());
-                    } else {
-                        nicknameEditText.setError("닉네임 형식이 올바르지 않습니다.");
-                    }
-                }
-
-            } else if (response.code() == 409) { // 닉네임 중복
+            if (response.code() == 409) {
                 nicknameEditText.setError("이미 사용 중인 닉네임입니다.");
-
+            } else if (response.code() == 400) {
+                Toast.makeText(this, "입력 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
             } else {
-                Log.e("ApiError", "Error Code: " + response.code() + ", Message: " + errorBodyString);
-                Toast.makeText(this, "오류: " + response.message(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "오류가 발생했습니다 (코드: " + response.code() + ")", Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
-            Toast.makeText(this, "오류 응답을 처리할 수 없습니다.", Toast.LENGTH_SHORT).show();
+            e.printStackTrace();
         }
     }
 }
