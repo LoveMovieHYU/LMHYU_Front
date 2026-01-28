@@ -1,17 +1,21 @@
 package com.example.lmhymvandroid.DTO;
 
+import com.google.gson.annotations.SerializedName;
+
 public class NicknameUpdateRequest {
-    private String newNickname;
+
+
+    @SerializedName("nickName")
+    private String nickName;
+    @SerializedName("birthday")
     private String birthday;
 
-    public NicknameUpdateRequest(String newNickname, String birthday) {
-        this.newNickname = newNickname;
+    public NicknameUpdateRequest(String nickName, String birthday) {
+        this.nickName = nickName;
         this.birthday = birthday;
     }
 
 
-
-    // Getters...
-    public String getNewNickname() { return newNickname; }
+    public String getNickName() { return nickName; }
     public String getBirthday() { return birthday; }
 }

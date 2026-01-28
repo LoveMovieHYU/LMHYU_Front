@@ -30,7 +30,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private TokenManager tokenManager;
     private long currentUserId;
     private EditText nicknameEditText;
-    private Button saveButton; //
+    private Button saveButton;
 
     private static final Pattern NICKNAME_PATTERN =
             Pattern.compile("^[a-zA-Z0-9가-힣]*$");
@@ -49,8 +49,8 @@ public class ProfileEditActivity extends AppCompatActivity {
             return;
         }
 
-        nicknameEditText = findViewById(R.id.editTextNickname); // ◀ xml에 필요
-        saveButton = findViewById(R.id.buttonSaveChanges); // ◀ xml에 필요
+        nicknameEditText = findViewById(R.id.editTextNickname);
+        saveButton = findViewById(R.id.buttonSaveChanges);
 
 
         saveButton.setOnClickListener(v -> {
@@ -90,7 +90,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     private void requestUpdateNickname(String nickname) {
         NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, null);
-        Call<Void> call = authService.updateNickname(request);;
+        Call<Void> call = authService.updateUserInfo(request);;
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -115,7 +115,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             Gson gson = new GsonBuilder().create();
 
 
-            if (response.code() == 400) { // 유효성 검사 또는 동일 닉네임
+            if (response.code() == 400) {
                 if (errorBodyString != null && errorBodyString.contains("same")) {
                     nicknameEditText.setError("현재 닉네임과 동일합니다.");
                 } else {

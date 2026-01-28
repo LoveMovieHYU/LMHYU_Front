@@ -26,7 +26,6 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,7 +48,24 @@ public class CreateNicknameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_nickname);
 
         authService = RetrofitClient.getClient(this).create(AuthService.class);
+        initViews();
+        setupCalendarLogic();
+        String missingField = getIntent().getStringExtra("MISSING_FIELD");
+        handleMissingField(missingField);
+    }
 
+    private void handleMissingField(String field) {
+        if (field == null) return;
+
+        if (field.contains("NICKNAME")) {
+            nicknameEditText.requestFocus();
+            Toast.makeText(this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+        } else if (field.contains("BIRTHDATE")) {
+            Toast.makeText(this, "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void initViews() {
         nicknameEditText = findViewById(R.id.editTextNickname);
         textViewBirthdate = findViewById(R.id.textViewBirthdate);
         buttonCalendar = findViewById(R.id.buttonCalendar);
@@ -57,46 +73,19 @@ public class CreateNicknameActivity extends AppCompatActivity {
         calendarCardView = findViewById(R.id.calendarCardView);
         calendarView = findViewById(R.id.calendarView);
 
-        setupCalendar();
-
         buttonCalendar.setOnClickListener(v -> {
-            calendarCardView.setVisibility(calendarCardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+            int visibility = (calendarCardView.getVisibility() == View.VISIBLE) ? View.GONE : View.VISIBLE;
+            calendarCardView.setVisibility(visibility);
         });
 
         completeButton.setOnClickListener(v -> {
             String nickname = nicknameEditText.getText().toString().trim();
-
-            if (!validateNicknameFormat(nickname)) {
-                return;
-            }
-
-            if (selectedDate.isEmpty()) {
-                Toast.makeText(this, "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
+            if (!validateInput(nickname)) return;
             requestUpdateUserInfo(nickname, selectedDate);
         });
     }
 
-    // 닉네임 형식 검사
-    private boolean validateNicknameFormat(String nickname) {
-        if (nickname.isEmpty()) {
-            nicknameEditText.setError("닉네임을 입력해주세요.");
-            return false;
-        }
-        if (nickname.length() < 1 || nickname.length() > 15) {
-            nicknameEditText.setError("닉네임은 1~5자 사이여야 합니다.");
-            return false;
-        }
-        if (!Pattern.matches("^[a-zA-Z0-9가-힣]*$", nickname)) {
-            nicknameEditText.setError("특수문자는 사용할 수 없습니다.");
-            return false;
-        }
-        return true;
-    }
-
-    private void setupCalendar() {
+    private void setupCalendarLogic() {
         calendarView.setTitleFormatter(day ->
                 String.format(Locale.KOREA, "%d년 %02d월", day.getYear(), day.getMonth() + 1));
 
@@ -106,6 +95,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
             DatePickerDialog dialog = new DatePickerDialog(this, (datePicker, year, month, day) -> {
                 calendarView.setCurrentDate(CalendarDay.from(year, month, 1));
             }, current.getYear(), current.getMonth(), 1);
+            dialog.setTitle("이동할 연도와 월을 선택하세요");
             dialog.show();
         });
 
@@ -134,20 +124,36 @@ public class CreateNicknameActivity extends AppCompatActivity {
         textViewBirthdate.setText(selectedDate);
         textViewBirthdate.setTextColor(Color.BLACK);
         completeButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#4A4A8A")));
+        completeButton.setTextColor(Color.WHITE);
+    }
+
+    private boolean validateInput(String nickname) {
+        if (nickname.isEmpty()) {
+            nicknameEditText.setError("닉네임을 입력해주세요.");
+            return false;
+        }
+        if (nickname.length() < 2) {
+            nicknameEditText.setError("닉네임은 최소 2자 이상이어야 합니다.");
+            return false;
+        }
+        if (selectedDate.isEmpty()) {
+            Toast.makeText(this, "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
     }
 
     private void requestUpdateUserInfo(String nickname, String birthdate) {
-        Log.d("LMHYU_LOG", "서버 요청 시작: " + nickname + ", " + birthdate);
-
+        Log.d("LMHYU_LOG", "API 요청 시작: " + nickname + ", " + birthdate);
         NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, birthdate);
-        authService.updateNickname(request).enqueue(new Callback<Void>() {
+
+        authService.updateUserInfo(request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                Log.d("LMHYU_LOG", "응답 코드: " + response.code());
-
                 if (response.isSuccessful()) {
-                    Log.d("LMHYU_LOG", "성공! 메인 화면 이동");
+                    Toast.makeText(CreateNicknameActivity.this, "설정이 완료되었습니다!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(CreateNicknameActivity.this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 } else {
@@ -158,7 +164,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("LMHYU_LOG", "네트워크 에러: " + t.getMessage());
-                Toast.makeText(CreateNicknameActivity.this, "네트워크 연결 상태를 확인해주세요.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateNicknameActivity.this, "서버 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -170,14 +176,13 @@ public class CreateNicknameActivity extends AppCompatActivity {
 
             if (response.code() == 409) {
                 nicknameEditText.setError("이미 사용 중인 닉네임입니다.");
-                Toast.makeText(this, "다른 닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
             } else if (response.code() == 400) {
-                nicknameEditText.setError("올바르지 않은 형식입니다.");
+                Toast.makeText(this, "입력 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "정보 업데이트 실패 (코드: " + response.code() + ")", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "오류가 발생했습니다 (코드: " + response.code() + ")", Toast.LENGTH_SHORT).show();
             }
         } catch (IOException e) {
-            Log.e("LMHYU_LOG", "에러 바디 읽기 실패", e);
+            e.printStackTrace();
         }
     }
 }
