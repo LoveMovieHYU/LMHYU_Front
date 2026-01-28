@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.lmhymvandroid.DTO.HomeResponse;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
-import com.example.lmhymvandroid.Service.MovieApiService;
+import com.example.lmhymvandroid.Service.MovieService;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +43,7 @@ public class HomeFragment extends Fragment {
 
     private void fetchHomeData() {
         // [중요] Fragment는 requireContext()를 통해 권한을 넘겨줘야 합니다.
-        MovieApiService apiService = RetrofitClient.getClient(requireContext()).create(MovieApiService.class);
+        MovieService apiService = RetrofitClient.getClient(requireContext()).create(MovieService.class);
 
         apiService.getHomeData().enqueue(new Callback<HomeResponse>() {
             @Override

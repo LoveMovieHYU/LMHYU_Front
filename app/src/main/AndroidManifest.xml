@@ -17,10 +17,6 @@
         android:usesCleartextTraffic="true"
         >
 
-
-        <activity
-            android:name=".Activity.WriteActivity"
-            android:exported="false" />
         <activity
             android:name=".Activity.ProfileEditActivity"
             android:exported="false" />
