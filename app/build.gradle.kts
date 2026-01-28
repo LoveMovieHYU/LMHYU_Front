@@ -80,7 +80,7 @@ dependencies {
     // 네이버 로그인 SDK 추가
     implementation("com.navercorp.nid:oauth:5.9.0")
     // 1. MaterialCalendarView (달력 커스텀용)
-    implementation("com.github.prolificinteractive:material-calendarview:2.0.1")
+    implementation("com.github.prolificinteractive:material-calendarview:1.4.3")
     // 2. Gson (객체를 JSON 문자열로 바꿔서 저장할 때 유용 - 선택사항이지만 추천)
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.bumptech.glide:glide:4.15.1")

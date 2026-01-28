@@ -22,32 +22,30 @@ public class LoginActivity extends AppCompatActivity {
 
         tokenManager = new TokenManager(this);
 
-        // 구글 로그인 버튼
+
         findViewById(R.id.sign_in_button).setOnClickListener(v -> {
             String backendUrl = "http://10.0.2.2.nip.io:8080/oauth2/authorization/google";
             openWebBrowser(backendUrl);
         });
 
-        // 네이버 로그인 버튼
+
         findViewById(R.id.button_naver_login).setOnClickListener(v -> {
             String backendUrl = "http://10.0.2.2:8080/oauth2/authorization/naver";
             openWebBrowser(backendUrl);
         });
 
-        // 3. (앱 처음 실행 시) 리다이렉트로 들어왔는지 확인
         handleDeepLink(getIntent());
     }
 
-    // 4. (이미 켜진 앱으로 돌아올 때) 리다이렉트 확인
-    // AndroidManifest의 launchMode="singleTask" 덕분에 이 함수가 호출됨
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        setIntent(intent); // 새 인텐트로 교체
+        setIntent(intent);
         handleDeepLink(intent);
     }
 
-    // 웹 브라우저 실행 함수
+
     private void openWebBrowser(String url) {
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
@@ -57,33 +55,41 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    // ★ 핵심: URL에서 토큰 뜯어내기
+
     private void handleDeepLink(Intent intent) {
         Uri data = intent.getData();
 
-        // 데이터가 있고, 우리가 설정한 example-app://callback 이 맞는지 확인
         if (data != null && "example-app".equals(data.getScheme()) && "callback".equals(data.getHost())) {
 
             Log.d("Login", "리다이렉트 URL 감지: " + data.toString());
 
-            // 백엔드가 보내준 쿼리 파라미터 이름("accessToken", "refreshToken")으로 값 추출
+
             String accessToken = data.getQueryParameter("accessToken");
             String refreshToken = data.getQueryParameter("refreshToken");
+            String userIdStr = data.getQueryParameter("userId");
+            String isNewUserStr = data.getQueryParameter("isNewUser");
 
             if (accessToken != null && refreshToken != null) {
-                Log.d("MY_TOKEN_CHECK", "✅ Access Token: " + accessToken);
-                Log.d("MY_TOKEN_CHECK", "✅ Refresh Token: " + refreshToken);
-                Log.d("Login", "로그인 성공! 토큰 획득 완료");
 
-                // 1. 토큰 저장 (TokenManager 사용)
-                // (userId가 필요한 경우 백엔드에서 param으로 같이 넘겨달라고 하거나, 0으로 임시 저장 후 /me API 호출)
-                tokenManager.saveTokens(accessToken, refreshToken, 0);
 
-                // 2. 메인 화면으로 이동
-                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                // 뒤로가기 눌렀을 때 로그인 화면 다시 안 나오게 플래그 설정
-                mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(mainIntent);
+                int userId = (userIdStr != null) ? Integer.parseInt(userIdStr) : -1;
+                boolean isNewUser = "true".equals(isNewUserStr);
+
+
+                tokenManager.saveTokens(accessToken, refreshToken, userId);
+
+                if (isNewUser) {
+                    Log.d("Login", "신규 유저 -> 닉네임 설정 이동");
+                    Intent nicknameIntent = new Intent(LoginActivity.this, CreateNicknameActivity.class);
+                    nicknameIntent.putExtra("USER_ID", userId);
+                    nicknameIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(nicknameIntent);
+                } else {
+                    Log.d("Login", "기존 유저 -> 홈화면 이동");
+                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(mainIntent);
+                }
                 finish();
             } else {
                 Log.e("Login", "토큰이 URL에 없습니다.");

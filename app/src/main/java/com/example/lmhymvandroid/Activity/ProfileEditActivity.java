@@ -28,7 +28,7 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     private AuthService authService;
     private TokenManager tokenManager;
-    private int currentUserId;
+    private long currentUserId;
     private EditText nicknameEditText;
     private Button saveButton; //
 
@@ -89,8 +89,8 @@ public class ProfileEditActivity extends AppCompatActivity {
     }
 
     private void requestUpdateNickname(String nickname) {
-        NicknameUpdateRequest request = new NicknameUpdateRequest(nickname);
-        Call<Void> call = authService.updateNickname(currentUserId, request);
+        NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, null);
+        Call<Void> call = authService.updateNickname(request);;
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -109,7 +109,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         });
     }
 
-    // ◀ CreateNicknameActivity의 handleApiError 메소드를 그대로 복사
     private void handleApiError(Response<?> response) {
         try {
             String errorBodyString = response.errorBody().string();

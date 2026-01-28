@@ -8,7 +8,6 @@ import retrofit2.http.Body;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
-import retrofit2.http.Path;
 
 public interface AuthService {
     // 액세스 토큰 재발급 요청
@@ -19,9 +18,8 @@ public interface AuthService {
     @POST("/logout")
     Call<Void> requestLogout(@Header("Authorization-Refresh") String refreshToken);
 
-    @PUT("/api/user/{userId}/nickname")
+    @PUT("/api/user/nickname")
     Call<Void> updateNickname(
-            @Path("userId") int userId,
             @Body NicknameUpdateRequest request
     );
 }
