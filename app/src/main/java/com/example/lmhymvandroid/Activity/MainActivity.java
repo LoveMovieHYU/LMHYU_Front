@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNav.setOnItemSelectedListener(this);
 
         if (savedInstanceState == null) {
-            replaceFragment(new HomeFragment());
+            replaceFragment(new RecommendFragment());
         }
     }
 
@@ -53,14 +53,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         int itemId = item.getItemId();
-        if (itemId == R.id.nav_home) {
-            replaceFragment(new HomeFragment());
+        if (itemId == R.id.nav_recommend) {
+            replaceFragment(new RecommendFragment());
             return true;
-        } else if (itemId == R.id.nav_search) {
+        } else if (itemId == R.id.nav_explore) {
             replaceFragment(new SearchFragment());
             return true;
         } else if (itemId == R.id.nav_mypage) {
-            replaceFragment(new com.example.lmhymvandroid.Activity.MyPageFragment());
+            replaceFragment(new MyPageFragment());
             return true;
         }
         return false;
