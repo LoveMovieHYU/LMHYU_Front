@@ -5,19 +5,21 @@ import com.google.gson.annotations.SerializedName;
 public class BiorhythmResponse {
 
     @SerializedName("physicalIndex")
-    private int physicalIndex;
+    private double physicalIndex;
 
     @SerializedName("emotionalIndex")
-    private int emotionalIndex;
+    private double emotionalIndex;
 
     @SerializedName("intellectualIndex")
-    private int intellectualIndex;
+    private double intellectualIndex;
 
     @SerializedName("statusMessage")
     private String statusMessage;
 
-    // 생성자 (필요 시 사용)
-    public BiorhythmResponse(int physicalIndex, int emotionalIndex, int intellectualIndex, String statusMessage) {
+    public BiorhythmResponse() {
+    }
+
+    public BiorhythmResponse(double physicalIndex, double emotionalIndex, double intellectualIndex, String statusMessage) {
         this.physicalIndex = physicalIndex;
         this.emotionalIndex = emotionalIndex;
         this.intellectualIndex = intellectualIndex;
@@ -25,15 +27,15 @@ public class BiorhythmResponse {
     }
 
     // Getters
-    public int getPhysicalIndex() {
+    public double getPhysicalIndex() {
         return physicalIndex;
     }
 
-    public int getEmotionalIndex() {
+    public double getEmotionalIndex() {
         return emotionalIndex;
     }
 
-    public int getIntellectualIndex() {
+    public double getIntellectualIndex() {
         return intellectualIndex;
     }
 
