@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             replaceFragment(new RecommendFragment());
             return true;
         } else if (itemId == R.id.nav_explore) {
-            replaceFragment(new SearchFragment());
+            replaceFragment(new ExploreFragment());
             return true;
         } else if (itemId == R.id.nav_mypage) {
             replaceFragment(new MyPageFragment());
