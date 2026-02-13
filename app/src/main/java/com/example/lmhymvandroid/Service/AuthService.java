@@ -1,9 +1,12 @@
 package com.example.lmhymvandroid.Service;
 
 import com.example.lmhymvandroid.DTO.LoginResponseDTO;
+import com.example.lmhymvandroid.DTO.MovieSummaryResponseDTO;
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 import com.example.lmhymvandroid.DTO.ProfileCheckResponseDTO;
 import com.example.lmhymvandroid.DTO.UserResponseDTO;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,4 +35,7 @@ public interface AuthService {
 
     @DELETE("/api/user/")
     Call<Void> deleteAccount(@Header("Authorization") String accessToken);
+
+    @GET("/api/likes")
+    Call<List<MovieSummaryResponseDTO>> getFavoriteMovies(@Header("Authorization") String accessToken);
 }
