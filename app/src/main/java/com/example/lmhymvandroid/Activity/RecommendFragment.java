@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,10 +18,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lmhymvandroid.Adapter.MovieClickAdapter;
 import com.example.lmhymvandroid.DTO.BiorhythmResponse;
 import com.example.lmhymvandroid.DTO.MovieItem;
-import com.example.lmhymvandroid.DTO.MovieRecommendationResponse;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class RecommendFragment extends Fragment {
     private RecyclerView rvMovieList;
     private MovieClickAdapter adapter;
     private MovieService movieService;
+    private AppCompatButton btnMore;
 
     @Nullable
     @Override
@@ -65,6 +67,14 @@ public class RecommendFragment extends Fragment {
         rvMovieList = view.findViewById(R.id.rv_movie_list);
         rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        btnMore = view.findViewById(R.id.btn_more); // fragment_recommend.xml에 있는 버튼 ID
+        btnMore.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
+                bottomNav.setSelectedItemId(R.id.nav_explore);
+            }
+        });
+
         // 어댑터 설정 (클릭 시 이벤트)
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
             @Override
@@ -83,50 +93,61 @@ public class RecommendFragment extends Fragment {
     }
 
     // 1. 바이오리듬 데이터 요청
+    // 수정된 loadBiorhythmData: 분석 요청 -> 성공 시 데이터 표시
     private void loadBiorhythmData() {
+        // 1단계: 분석 요청 (Redis에 데이터 생성/갱신)
         movieService.getBiorhythmAnalyze().enqueue(new Callback<BiorhythmResponse>() {
             @Override
             public void onResponse(Call<BiorhythmResponse> call, Response<BiorhythmResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
+                    // 분석 성공! 바로 화면에 표시
                     BiorhythmResponse data = response.body();
-
-                    // 숫자 데이터를 문자열로 변환해 화면에 표시
-                    tvPhysical.setText(String.valueOf(data.getPhysicalIndex()));
-                    tvEmotional.setText(String.valueOf(data.getEmotionalIndex()));
-                    tvIntellectual.setText(String.valueOf(data.getIntellectualIndex()));
-                    tvStatusMsg.setText(data.getStatusMessage());
+                    updateBiorhythmUI(data);
                 } else {
-                    // 서버 오류 시
+                    // 분석 실패 시
                     tvStatusMsg.setText("데이터 분석에 실패했습니다.");
+                    Log.e("API_ERROR", "분석 요청 실패: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<BiorhythmResponse> call, Throwable t) {
-                // 통신 실패 시
                 tvStatusMsg.setText("서버 연결 상태를 확인해주세요.");
                 Log.e("API_FAIL", t.getMessage());
             }
         });
     }
 
+    // UI 업데이트용 헬퍼 메서드 (중복 코드 제거)
+    private void updateBiorhythmUI(BiorhythmResponse data) {
+        if (data == null) return;
+
+        // 소수점 제거하고 정수로 표시 (깔끔하게)
+        tvPhysical.setText(String.valueOf(Math.round(data.getPhysicalIndex())));
+        tvEmotional.setText(String.valueOf(Math.round(data.getEmotionalIndex())));
+        tvIntellectual.setText(String.valueOf(Math.round(data.getIntellectualIndex())));
+        tvStatusMsg.setText(data.getStatusMessage());
+    }
+
+    // 2. 영화 추천 리스트 요청
     // 2. 영화 추천 리스트 요청
     private void loadRecommendedMovies() {
-        movieService.getRecommendedMovies().enqueue(new Callback<MovieRecommendationResponse>() {
+        // Call<List<MovieItem>> 으로 변경됨
+        movieService.getRecommendedMovies().enqueue(new Callback<List<MovieItem>>() {
             @Override
-            public void onResponse(Call<MovieRecommendationResponse> call, Response<MovieRecommendationResponse> response) {
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<MovieItem> movies = response.body().getMovieList();
-                    if (movies != null) {
-                        adapter.setMovieList(movies); // 어댑터에 데이터 전달
-                    }
+                    // response.body() 자체가 이미 리스트입니다! (.getMovieList() 필요 없음)
+                    List<MovieItem> movies = response.body();
+                    adapter.setMovieList(movies);
                 } else {
                     Log.e("API_ERROR", "영화 리스트 로드 실패: " + response.code());
                 }
             }
 
             @Override
-            public void onFailure(Call<MovieRecommendationResponse> call, Throwable t) {
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                // 여기에 "Expected BEGIN_OBJECT but was BEGIN_ARRAY" 에러가 찍히고 있었을 겁니다.
                 Log.e("API_FAIL", t.getMessage());
             }
         });
