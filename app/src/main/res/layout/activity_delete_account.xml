@@ -129,11 +129,12 @@
         android:layout_height="56dp"
         android:text="탈퇴 계속 진행하기"
         android:textColor="#FFFFFF"
-        android:backgroundTint="#6A6A8A"
+        android:background="@drawable/bg_rounded_gray"
         android:visibility="gone"
         android:layout_marginBottom="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@null"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
