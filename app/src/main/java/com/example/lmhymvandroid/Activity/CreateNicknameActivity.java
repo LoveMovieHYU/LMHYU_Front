@@ -16,15 +16,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
+import com.example.lmhymvandroid.Service.MovieService;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -39,14 +42,17 @@ public class CreateNicknameActivity extends AppCompatActivity {
     private CardView calendarCardView;
     private MaterialCalendarView calendarView;
     private String selectedDate = "";
+    private MovieService movieService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_nickname);
 
-        authService = RetrofitClient.getClient(this).create(AuthService.class);
+        movieService = RetrofitClient.getClient(this).create(MovieService.class);
         initViews();
+//        authService = RetrofitClient.getClient(this).create(AuthService.class);
+//        initViews();
         setupCalendarLogic();
 
         // LoginActivity에서 넘어온 누락 필드 안내 (선택 사항)
@@ -148,36 +154,45 @@ public class CreateNicknameActivity extends AppCompatActivity {
     }
 
     private void requestUpdateUserInfo(String nickname, String birthdate) {
-        // 서버 에러 메시지에 맞춘 nickName, birthday 필드 사용
+        Log.d("LMHYU_LOG", "API 요청 시작: " + nickname + ", " + birthdate);
         NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, birthdate);
 
-        authService.updateUserInfo(request).enqueue(new Callback<Void>() {
+        movieService.postFirstRecommend(request).enqueue(new Callback<List<MovieItem>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(CreateNicknameActivity.this, "환영합니다!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateNicknameActivity.this, "환영합니다! 추천을 시작합니다.", Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(CreateNicknameActivity.this, MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
                     finish();
                 } else {
-                    handleError(response);
+                    handleApiError(response);
                 }
             }
-
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("API_ERR", t.getMessage());
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Log.e("LMHYU_LOG", "네트워크 에러: " + t.getMessage());
+                Toast.makeText(CreateNicknameActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void handleError(Response<?> response) {
+    private void handleApiError(Response<?> response) {
         try {
-            String errorBody = response.errorBody() != null ? response.errorBody().string() : "";
-            Log.e("API_ERR", "상세: " + errorBody);
-            if (response.code() == 409) nicknameEditText.setError("중복된 닉네임입니다.");
-            else Toast.makeText(this, "입력 값을 확인해주세요.", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) { e.printStackTrace(); }
+            String errorJson = response.errorBody() != null ? response.errorBody().string() : "";
+            Log.e("LMHYU_LOG", "에러 상세: " + errorJson);
+
+            if (response.code() == 409) {
+                nicknameEditText.setError("이미 사용 중인 닉네임입니다.");
+            } else if (response.code() == 400) {
+                Toast.makeText(this, "입력 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "오류가 발생했습니다 (코드: " + response.code() + ")", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
