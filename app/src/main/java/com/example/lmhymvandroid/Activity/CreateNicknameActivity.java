@@ -16,15 +16,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
+import com.example.lmhymvandroid.Service.MovieService;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -41,14 +44,17 @@ public class CreateNicknameActivity extends AppCompatActivity {
     private CardView calendarCardView;
     private MaterialCalendarView calendarView;
     private String selectedDate = "";
+    private MovieService movieService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_nickname);
 
-        authService = RetrofitClient.getClient(this).create(AuthService.class);
+        movieService = RetrofitClient.getClient(this).create(MovieService.class);
         initViews();
+//        authService = RetrofitClient.getClient(this).create(AuthService.class);
+//        initViews();
         setupCalendarLogic();
         String missingField = getIntent().getStringExtra("MISSING_FIELD");
         handleMissingField(missingField);
@@ -147,11 +153,12 @@ public class CreateNicknameActivity extends AppCompatActivity {
         Log.d("LMHYU_LOG", "API 요청 시작: " + nickname + ", " + birthdate);
         NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, birthdate);
 
-        authService.updateUserInfo(request).enqueue(new Callback<Void>() {
+        movieService.postFirstRecommend(request).enqueue(new Callback<List<MovieItem>>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(CreateNicknameActivity.this, "설정이 완료되었습니다!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateNicknameActivity.this, "환영합니다! 추천을 시작합니다.", Toast.LENGTH_SHORT).show();
+
                     Intent intent = new Intent(CreateNicknameActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -160,11 +167,10 @@ public class CreateNicknameActivity extends AppCompatActivity {
                     handleApiError(response);
                 }
             }
-
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
                 Log.e("LMHYU_LOG", "네트워크 에러: " + t.getMessage());
-                Toast.makeText(CreateNicknameActivity.this, "서버 연결에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(CreateNicknameActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
             }
         });
     }
