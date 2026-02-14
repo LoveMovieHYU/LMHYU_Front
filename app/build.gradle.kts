@@ -84,4 +84,6 @@ dependencies {
     // 2. Gson (객체를 JSON 문자열로 바꿔서 저장할 때 유용 - 선택사항이지만 추천)
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.bumptech.glide:glide:4.15.1")
+    //로그출력용
+    implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
 }

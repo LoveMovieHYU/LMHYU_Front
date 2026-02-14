@@ -7,11 +7,14 @@ public class UserResponseDTO {
     @SerializedName("nickname")
     private String nickname;
 
-    @SerializedName("birthdate")
-    private String birthdate;
+    @SerializedName("birthday")
+    private String birthday;
 
     @SerializedName("id")
     private int id;
+
+    @SerializedName("name")
+    private String name;
 
     // Getter & Setter
     public String getNickname() {
@@ -23,11 +26,11 @@ public class UserResponseDTO {
     }
 
     public String getBirthdate() {
-        return birthdate;
+        return birthday;
     }
 
-    public void setBirthdate(String birthdate) {
-        this.birthdate = birthdate;
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
     }
 
     public int getId() {
@@ -37,4 +40,8 @@ public class UserResponseDTO {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getName() {return name;}
+
+    public void setName(String name) {this.name = name;}
 }
