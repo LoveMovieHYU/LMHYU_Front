@@ -52,12 +52,8 @@ public class RecommendFragment extends Fragment {
 
         loadBiorhythmData();
 
-        // [수정] 실제 API 대신 테스트 데이터를 로드합니다.
-        // loadRecommendedMovies();  <-- 기존 API 호출 주석 처리
-        loadTestMovies();         // <-- 테스트 데이터 로드 함수 호출
+        loadTestMovies();
     }
-
-    // ... (initViews, initRetrofit, loadBiorhythmData 등 기존 메서드 유지) ...
 
     private void initViews(View view) {
         // ... (기존 코드 유지)
@@ -69,12 +65,9 @@ public class RecommendFragment extends Fragment {
         rvMovieList = view.findViewById(R.id.rv_movie_list);
         rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // ... (버튼 리스너 등 기존 코드 유지) ...
-
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MovieItem movie) {
-                // 클릭 시 상세 페이지 이동 로직 (이전 질문에서 구현한 내용)
                 android.content.Intent intent = new android.content.Intent(getContext(), MovieDetailActivity.class);
                 intent.putExtra("movie_data", movie);
                 startActivity(intent);
@@ -90,8 +83,6 @@ public class RecommendFragment extends Fragment {
     }
 
     private void loadBiorhythmData() {
-        // ... (기존 코드 유지) ...
-        // 바이오리듬 API는 잘 된다면 그대로 두시고, 만약 이것도 안 되면 주석 처리하세요.
         movieService.getBiorhythmAnalyze().enqueue(new Callback<BiorhythmResponse>() {
             @Override
             public void onResponse(Call<BiorhythmResponse> call, Response<BiorhythmResponse> response) {
@@ -99,6 +90,7 @@ public class RecommendFragment extends Fragment {
                     updateBiorhythmUI(response.body());
                 }
             }
+
             @Override
             public void onFailure(Call<BiorhythmResponse> call, Throwable t) {
                 // 에러 처리
@@ -114,9 +106,6 @@ public class RecommendFragment extends Fragment {
         tvStatusMsg.setText(data.getStatusMessage());
     }
 
-    // ==========================================
-    // [추가] 강제 테스트 데이터 로드 메서드
-    // ==========================================
     private void loadTestMovies() {
         List<MovieItem> testList = new ArrayList<>();
 
@@ -161,11 +150,4 @@ public class RecommendFragment extends Fragment {
             tvStatusMsg.setText("현재 테스트 데이터 표시 중입니다.");
         }
     }
-
-    // [기존 메서드 주석 처리 또는 유지]
-    /*
-    private void loadRecommendedMovies() {
-        movieService.getRecommendedMovies().enqueue(...)
-    }
-    */
 }
