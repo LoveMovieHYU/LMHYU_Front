@@ -1,4 +1,4 @@
-package com.example.lmhymvandroid.Activity; // 패키지명 확인
+package com.example.lmhymvandroid.Activity;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
