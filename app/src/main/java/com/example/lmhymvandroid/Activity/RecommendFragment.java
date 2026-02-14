@@ -29,8 +29,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RecommendFragment extends Fragment {
-
-    // ... (변수 선언 부분 기존 유지) ...
     private TextView tvPhysical, tvEmotional, tvIntellectual, tvStatusMsg;
     private RecyclerView rvMovieList;
     private MovieClickAdapter adapter;
@@ -56,7 +54,6 @@ public class RecommendFragment extends Fragment {
     }
 
     private void initViews(View view) {
-        // ... (기존 코드 유지)
         tvPhysical = view.findViewById(R.id.tv_physical_index);
         tvEmotional = view.findViewById(R.id.tv_emotional_index);
         tvIntellectual = view.findViewById(R.id.tv_intellectual_index);
