@@ -51,11 +51,9 @@ public class CreateNicknameActivity extends AppCompatActivity {
 
         movieService = RetrofitClient.getClient(this).create(MovieService.class);
         initViews();
-//        authService = RetrofitClient.getClient(this).create(AuthService.class);
-//        initViews();
         setupCalendarLogic();
 
-        // LoginActivity에서 넘어온 누락 필드 안내 (선택 사항)
+        // LoginActivity에서 넘어온 누락 필드 안내
         String missing = getIntent().getStringExtra("MISSING_FIELD");
         if (missing != null) Log.d("HYMV_DEBUG", "누락 필드: " + missing);
     }
@@ -85,7 +83,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
         calendarView.setTitleFormatter(day ->
                 String.format(Locale.KOREA, "%d년 %02d월", day.getYear(), day.getMonth() + 1));
 
-        // 2. ◀◀ [핵심] 타이틀 클릭 시 연도 점프 다이얼로그 표시
+        // 2. 타이틀 클릭 시 연도 점프 다이얼로그 표시
         calendarView.setOnTitleClickListener(view -> showYearMonthPicker());
 
         // 3. 날짜 선택 시 텍스트 업데이트 및 달력 닫기

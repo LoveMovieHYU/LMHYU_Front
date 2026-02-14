@@ -12,7 +12,7 @@
         android:id="@+id/btn_back"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/ic_arrow_back"
         app:tint="#FFFFFF"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -53,7 +53,6 @@
         android:inputType="text"
         android:maxLines="1"
         app:layout_constraintTop_toBottomOf="@id/label_nickname"/>
-
     <TextView
         android:id="@+id/label_birthdate"
         android:layout_width="wrap_content"
@@ -66,7 +65,7 @@
         app:layout_constraintTop_toBottomOf="@id/et_nickname"/>
 
     <TextView
-        android:id="@+id/et_birthdate"
+        android:id="@+id/tv_birthdate"
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="10dp"
@@ -79,17 +78,68 @@
         android:clickable="true"
         android:focusable="true"
         app:layout_constraintTop_toBottomOf="@id/label_birthdate"/>
+
     <ImageView
+        android:id="@+id/iv_calendar_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@android:drawable/ic_menu_my_calendar"
+        android:src="@drawable/ic_calendar"
         android:layout_marginEnd="16dp"
         app:tint="#888888"
-        app:layout_constraintEnd_toEndOf="@id/et_birthdate"
-        app:layout_constraintTop_toTopOf="@id/et_birthdate"
-        app:layout_constraintBottom_toBottomOf="@id/et_birthdate"/>
+        app:layout_constraintEnd_toEndOf="@id/tv_birthdate"
+        app:layout_constraintTop_toTopOf="@id/tv_birthdate"
+        app:layout_constraintBottom_toBottomOf="@id/tv_birthdate"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/calendarCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/tv_birthdate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginTop="8dp">
+
+                <Button
+                    android:id="@+id/btnCalendarDelete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="삭제"
+                    android:textColor="#FF0000"
+                    style="?android:attr/borderlessButtonStyle"/>
+
+                <Button
+                    android:id="@+id/btnCalendarToday"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="오늘"
+                    style="?android:attr/borderlessButtonStyle"/>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
     <TextView
+        android:id="@+id/tv_info_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="입력한 생년월일을 기준으로 오늘의 바이오리듬을\n분석해요"
@@ -98,7 +148,9 @@
         android:padding="16dp"
         android:layout_marginTop="16dp"
         android:textSize="13sp"
-        app:layout_constraintTop_toBottomOf="@id/et_birthdate"/>
+        app:layout_constraintTop_toBottomOf="@id/calendarCardView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <android.widget.Button
         android:id="@+id/btn_save"
@@ -108,10 +160,11 @@
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:backgroundTint="#6A6A8A"
-        android:layout_marginTop="40dp"
-        app:layout_constraintTop_toBottomOf="@id/et_birthdate"
-        app:layout_constraintVertical_bias="0.2"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:background="@drawable/bg_rounded_gray"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_info_message"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.0"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
