@@ -55,6 +55,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.MainActivity" />
+        <activity
+            android:name=".Activity.MovieDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

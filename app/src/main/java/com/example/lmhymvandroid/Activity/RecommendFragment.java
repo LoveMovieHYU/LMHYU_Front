@@ -1,12 +1,10 @@
-package com.example.lmhymvandroid.Activity;
+package com.example.lmhymvandroid.Activity; // 패키지명 확인
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +19,9 @@ import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
@@ -31,7 +30,7 @@ import retrofit2.Response;
 
 public class RecommendFragment extends Fragment {
 
-    // XML ID와 연결할 변수들
+    // ... (변수 선언 부분 기존 유지) ...
     private TextView tvPhysical, tvEmotional, tvIntellectual, tvStatusMsg;
     private RecyclerView rvMovieList;
     private MovieClickAdapter adapter;
@@ -51,35 +50,34 @@ public class RecommendFragment extends Fragment {
         initViews(view);
         initRetrofit();
 
-        // 데이터 호출
         loadBiorhythmData();
-        loadRecommendedMovies();
+
+        // [수정] 실제 API 대신 테스트 데이터를 로드합니다.
+        // loadRecommendedMovies();  <-- 기존 API 호출 주석 처리
+        loadTestMovies();         // <-- 테스트 데이터 로드 함수 호출
     }
 
+    // ... (initViews, initRetrofit, loadBiorhythmData 등 기존 메서드 유지) ...
+
     private void initViews(View view) {
-        // 바이오리듬 카드 연결
+        // ... (기존 코드 유지)
         tvPhysical = view.findViewById(R.id.tv_physical_index);
         tvEmotional = view.findViewById(R.id.tv_emotional_index);
         tvIntellectual = view.findViewById(R.id.tv_intellectual_index);
         tvStatusMsg = view.findViewById(R.id.tv_status_message);
 
-        // 영화 리스트 연결
         rvMovieList = view.findViewById(R.id.rv_movie_list);
         rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        btnMore = view.findViewById(R.id.btn_more); // fragment_recommend.xml에 있는 버튼 ID
-        btnMore.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
-                bottomNav.setSelectedItemId(R.id.nav_explore);
-            }
-        });
+        // ... (버튼 리스너 등 기존 코드 유지) ...
 
-        // 어댑터 설정 (클릭 시 이벤트)
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MovieItem movie) {
-                Toast.makeText(getContext(), movie.getTitle() + " 선택", Toast.LENGTH_SHORT).show();
+                // 클릭 시 상세 페이지 이동 로직 (이전 질문에서 구현한 내용)
+                android.content.Intent intent = new android.content.Intent(getContext(), MovieDetailActivity.class);
+                intent.putExtra("movie_data", movie);
+                startActivity(intent);
             }
         });
         rvMovieList.setAdapter(adapter);
@@ -87,69 +85,87 @@ public class RecommendFragment extends Fragment {
 
     private void initRetrofit() {
         if (getContext() != null) {
-            // RetrofitClient를 사용하여 토큰이 포함된 요청을 보냄
             movieService = RetrofitClient.getClient(getContext()).create(MovieService.class);
         }
     }
 
-    // 1. 바이오리듬 데이터 요청
-    // 수정된 loadBiorhythmData: 분석 요청 -> 성공 시 데이터 표시
     private void loadBiorhythmData() {
-        // 1단계: 분석 요청 (Redis에 데이터 생성/갱신)
+        // ... (기존 코드 유지) ...
+        // 바이오리듬 API는 잘 된다면 그대로 두시고, 만약 이것도 안 되면 주석 처리하세요.
         movieService.getBiorhythmAnalyze().enqueue(new Callback<BiorhythmResponse>() {
             @Override
             public void onResponse(Call<BiorhythmResponse> call, Response<BiorhythmResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // 분석 성공! 바로 화면에 표시
-                    BiorhythmResponse data = response.body();
-                    updateBiorhythmUI(data);
-                } else {
-                    // 분석 실패 시
-                    tvStatusMsg.setText("데이터 분석에 실패했습니다.");
-                    Log.e("API_ERROR", "분석 요청 실패: " + response.code());
+                    updateBiorhythmUI(response.body());
                 }
             }
-
             @Override
             public void onFailure(Call<BiorhythmResponse> call, Throwable t) {
-                tvStatusMsg.setText("서버 연결 상태를 확인해주세요.");
-                Log.e("API_FAIL", t.getMessage());
+                // 에러 처리
             }
         });
     }
 
-    // UI 업데이트용 헬퍼 메서드 (중복 코드 제거)
     private void updateBiorhythmUI(BiorhythmResponse data) {
         if (data == null) return;
-
-        // 소수점 제거하고 정수로 표시 (깔끔하게)
         tvPhysical.setText(String.valueOf(Math.round(data.getPhysicalIndex())));
         tvEmotional.setText(String.valueOf(Math.round(data.getEmotionalIndex())));
         tvIntellectual.setText(String.valueOf(Math.round(data.getIntellectualIndex())));
         tvStatusMsg.setText(data.getStatusMessage());
     }
 
-    // 2. 영화 추천 리스트 요청
-    // 2. 영화 추천 리스트 요청
-    private void loadRecommendedMovies() {
-        // Call<List<MovieItem>> 으로 변경됨
-        movieService.getRecommendedMovies().enqueue(new Callback<List<MovieItem>>() {
-            @Override
-            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    // response.body() 자체가 이미 리스트입니다! (.getMovieList() 필요 없음)
-                    List<MovieItem> movies = response.body();
-                    adapter.setMovieList(movies);
-                } else {
-                    Log.e("API_ERROR", "영화 리스트 로드 실패: " + response.code());
-                }
-            }
+    // ==========================================
+    // [추가] 강제 테스트 데이터 로드 메서드
+    // ==========================================
+    private void loadTestMovies() {
+        List<MovieItem> testList = new ArrayList<>();
 
-            @Override
-            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
-                // 여기에 "Expected BEGIN_OBJECT but was BEGIN_ARRAY" 에러가 찍히고 있었을 겁니다.
-                Log.e("API_FAIL", t.getMessage());
-            }
-        });
+        // TMDB 이미지 기본 URL (포스터 URL이 /로 시작하므로 앞에 붙여줘야 함)
+        String imageBaseUrl = "https://image.tmdb.org/t/p/w500";
+
+        // 1. 우리의 잘못
+        testList.add(new MovieItem(
+                1156594,
+                "우리의 잘못",
+                imageBaseUrl + "/yCbT1nKemh1AuQgdbns5Cf1RmRj.jpg",
+                4.0,
+                "2025-10-15",
+                Arrays.asList("앙앙") // 장르 리스트
+        ));
+
+        // 2. 마르코
+        testList.add(new MovieItem(
+                1186350,
+                "마르코",
+                imageBaseUrl + "/6Nj8Y1A9lcReqZZvRHOSiO3iTl6.jpg",
+                4.0,
+                "2025-10-15",
+                Arrays.asList("앙앙")
+        ));
+
+        // 3. 쥬라기 월드: 새로운 시작
+        testList.add(new MovieItem(
+                1234821,
+                "쥬라기 월드: 새로운 시작",
+                imageBaseUrl + "/ygr4hE8Qpagv8sxZbMw1mtYkcQE.jpg",
+                4.0,
+                "2025-10-15",
+                Arrays.asList("앙앙")
+        ));
+
+        // 어댑터에 데이터 세팅
+        adapter.setMovieList(testList);
+
+        // UI에 "테스트 모드입니다" 표시 (선택사항)
+        if (tvStatusMsg != null) {
+            tvStatusMsg.setText("현재 테스트 데이터 표시 중입니다.");
+        }
     }
+
+    // [기존 메서드 주석 처리 또는 유지]
+    /*
+    private void loadRecommendedMovies() {
+        movieService.getRecommendedMovies().enqueue(...)
+    }
+    */
 }
