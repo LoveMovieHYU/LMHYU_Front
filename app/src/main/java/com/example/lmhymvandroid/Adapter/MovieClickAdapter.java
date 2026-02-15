@@ -67,7 +67,7 @@ public class MovieClickAdapter extends RecyclerView.Adapter<MovieClickAdapter.Mo
             super(itemView);
             ivPoster = itemView.findViewById(R.id.iv_movie_poster);
             tvTitle = itemView.findViewById(R.id.tv_movie_title);
-            tvDesc = itemView.findViewById(R.id.tv_movie_desc); // 여기가 장르,년도,평점 들어갈 곳
+            tvDesc = itemView.findViewById(R.id.tv_movie_desc);
 
             itemView.setOnClickListener(v -> {
                 int pos = getAdapterPosition();

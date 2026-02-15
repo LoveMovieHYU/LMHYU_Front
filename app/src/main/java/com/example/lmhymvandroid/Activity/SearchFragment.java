@@ -111,7 +111,6 @@ public class SearchFragment extends Fragment {
 
         hideKeyboard();
 
-        // [API 호출] 반환 타입이 List<MovieSearchResponse> 입니다.
         movieService.searchMovies(keyword, 1).enqueue(new Callback<List<MovieSearchResponse>>() {
             @Override
             public void onResponse(Call<List<MovieSearchResponse>> call, Response<List<MovieSearchResponse>> response) {
@@ -156,12 +155,11 @@ public class SearchFragment extends Fragment {
         });
     }
 
-    // [핵심] 검색 DTO를 리스트 박스용 MovieItem으로 변환하는 메서드
     private List<MovieItem> convertToMovieItems(List<MovieSearchResponse> searchResults) {
         List<MovieItem> items = new ArrayList<>();
 
         for (MovieSearchResponse res : searchResults) {
-            // 검색 결과에는 평점(rating)과 장르(genres)가 없으므로 기본값 설정
+
             double defaultRating = 0.0;
             List<String> defaultGenres = new ArrayList<>(); // 빈 리스트
 
