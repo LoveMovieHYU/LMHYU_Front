@@ -6,6 +6,7 @@ import com.example.lmhymvandroid.DTO.LikeRequest;
 import com.example.lmhymvandroid.DTO.MovieDetailResponse;
 import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.MovieRecommendationResponse;
+import com.example.lmhymvandroid.DTO.MovieSearchResponse;
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 
 import java.util.List;
@@ -46,10 +47,8 @@ public interface MovieService {
     @GET("/api/movies")
     Call<MovieDetailResponse> getMovieDetail(@Query("movieId") int tmdbId);
 
-    // [신규 추가] 영화 검색 API
-    // 예시: /api/movies/search?keyword=인셉션&page=1
     @GET("/api/movies/search")
-    Call<MovieRecommendationResponse> searchMovies(
+    Call<List<MovieSearchResponse>> searchMovies(
             @Query("keyword") String keyword,
             @Query("page") int page
     );

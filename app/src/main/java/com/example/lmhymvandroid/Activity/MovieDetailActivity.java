@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatButton;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
@@ -20,6 +19,7 @@ import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
+import com.google.android.material.button.MaterialButton;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,13 +27,14 @@ import retrofit2.Response;
 
 public class MovieDetailActivity extends AppCompatActivity {
 
+    private MaterialButton btnLike;
     private MovieService movieService;
     private int currentMovieId;
 
     // UI 변수
     private ImageView ivPoster, btnBack;
     private TextView tvTitle, tvInfo, tvSummary;
-    private AppCompatButton btnLike;
+    // private AppCompatButton btnLike;
     private LinearLayout layoutCast;
 
     @Override
@@ -53,8 +54,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // [중요] MovieItem에서는 오직 ID만 가져옵니다.
-        // 제목, 평점 등은 여기서 절대 세팅하지 않습니다.
         currentMovieId = movieItem.getMovieId();
         Log.d("MovieDetail", "전달받은 Movie ID: " + currentMovieId);
 
@@ -88,7 +87,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         ivPoster.setImageResource(android.R.drawable.ic_menu_gallery);
     }
 
-    // [핵심] 실제 API 호출
+    // API 호출
     private void loadMovieDetail(int tmdbId) {
         movieService.getMovieDetail(tmdbId).enqueue(new Callback<MovieDetailResponse>() {
             @Override
@@ -194,17 +193,24 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private void requestLikeMovie() {
         LikeRequest request = new LikeRequest("LIKE");
+
         movieService.postLike(currentMovieId, request).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(MovieDetailActivity.this, "좋아요 반영 완료! ❤️", Toast.LENGTH_SHORT).show();
-                    btnLike.setText("♥ Liked");
-                    btnLike.setBackgroundColor(0xFFFFCDD2);
+
+                    // [텍스트 변경]
+                    btnLike.setText("좋아요");
+
+                    // 아이콘을 빨간 하트로 변경 (MaterialButton 전용 메서드)
+                    btnLike.setIconResource(R.drawable.ic_heart_red);
+
                 } else {
                     Toast.makeText(MovieDetailActivity.this, "좋아요 실패", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Toast.makeText(MovieDetailActivity.this, "네트워크 오류", Toast.LENGTH_SHORT).show();

@@ -1,8 +1,8 @@
 package com.example.lmhymvandroid.Activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,11 +21,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lmhymvandroid.Adapter.MovieClickAdapter;
 import com.example.lmhymvandroid.DTO.MovieItem;
-import com.example.lmhymvandroid.DTO.MovieRecommendationResponse;
+import com.example.lmhymvandroid.DTO.MovieSearchResponse;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -64,42 +64,40 @@ public class SearchFragment extends Fragment {
             movieService = RetrofitClient.getClient(getContext()).create(MovieService.class);
         }
 
-        // 3. 리사이클러뷰 설정 (기존 Adapter 재사용)
+        // 3. 리사이클러뷰 설정
         rvSearchResult.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        // 클릭 시 상세 페이지로 이동하도록 설정
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MovieItem movie) {
-                // TODO: 영화 상세 페이지로 이동
-                Toast.makeText(getContext(), movie.getTitle() + " 상세 정보로 이동", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+                intent.putExtra("movie_data", movie); // 상세 페이지로 데이터 전달
+                startActivity(intent);
             }
         });
         rvSearchResult.setAdapter(adapter);
 
-        // 4. 이벤트 리스너 설정
+        // 4. 리스너 설정
         setupListeners();
 
-        // 화면 진입 시 키보드 자동으로 올리기 (선택 사항)
+        // 키보드 올리기
         etSearchInput.requestFocus();
         showKeyboard();
     }
 
     private void setupListeners() {
-        // 뒤로가기 버튼
         btnBack.setOnClickListener(v -> {
-            getParentFragmentManager().popBackStack();
             hideKeyboard();
+            getParentFragmentManager().popBackStack();
         });
 
-        // 키보드에서 '검색' 버튼 눌렀을 때 실행
-        etSearchInput.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    performSearch();
-                    return true;
-                }
-                return false;
+        etSearchInput.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                performSearch();
+                return true;
             }
+            return false;
         });
     }
 
@@ -111,38 +109,71 @@ public class SearchFragment extends Fragment {
             return;
         }
 
-        // 키보드 숨기기
         hideKeyboard();
 
-        // API 호출 (페이지 1로 고정, 필요 시 페이징 구현 가능)
-        movieService.searchMovies(keyword, 1).enqueue(new Callback<MovieRecommendationResponse>() {
+        movieService.searchMovies(keyword, 1).enqueue(new Callback<List<MovieSearchResponse>>() {
             @Override
-            public void onResponse(Call<MovieRecommendationResponse> call, Response<MovieRecommendationResponse> response) {
+            public void onResponse(Call<List<MovieSearchResponse>> call, Response<List<MovieSearchResponse>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    List<MovieItem> movies = response.body().getMovieList();
+                    List<MovieSearchResponse> resultList = response.body();
 
-                    if (movies != null && !movies.isEmpty()) {
-                        // 결과가 있을 때: 리스트 보여주고 빈 화면 숨김
-                        adapter.setMovieList(movies);
+                    if (!resultList.isEmpty()) {
+                        // [데이터 변환] SearchResponse -> MovieItem
+                        List<MovieItem> movieItems = convertToMovieItems(resultList);
+
+                        adapter.setMovieList(movieItems);
                         rvSearchResult.setVisibility(View.VISIBLE);
                         layoutEmptyState.setVisibility(View.GONE);
                     } else {
-                        // 결과가 0개일 때
                         showEmptyState();
                         Toast.makeText(getContext(), "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     showEmptyState();
-                    Toast.makeText(getContext(), "검색 실패: " + response.code(), Toast.LENGTH_SHORT).show();
+                    // 404 등 에러 처리
+                    if(response.code() == 404) {
+                        Toast.makeText(getContext(), "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getContext(), "검색 실패: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<MovieRecommendationResponse> call, Throwable t) {
+            public void onFailure(Call<List<MovieSearchResponse>> call, Throwable t) {
                 showEmptyState();
-                Toast.makeText(getContext(), "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+
+                // 로그에 정확한 에러 원인 출력
+                t.printStackTrace();
+
+                if (t instanceof java.net.SocketTimeoutException) {
+                    Toast.makeText(getContext(), "서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
         });
+    }
+
+    private List<MovieItem> convertToMovieItems(List<MovieSearchResponse> searchResults) {
+        List<MovieItem> items = new ArrayList<>();
+
+        for (MovieSearchResponse res : searchResults) {
+
+            double defaultRating = 0.0;
+            List<String> defaultGenres = new ArrayList<>(); // 빈 리스트
+
+            MovieItem item = new MovieItem(
+                    res.getMovieId(),
+                    res.getTitle(),
+                    res.getPosterUrl(),
+                    defaultRating,
+                    res.getReleaseDate(),
+                    defaultGenres
+            );
+            items.add(item);
+        }
+        return items;
     }
 
     private void showEmptyState() {
