@@ -54,8 +54,6 @@ public class MovieDetailActivity extends AppCompatActivity {
             return;
         }
 
-        // [중요] MovieItem에서는 오직 ID만 가져옵니다.
-        // 제목, 평점 등은 여기서 절대 세팅하지 않습니다.
         currentMovieId = movieItem.getMovieId();
         Log.d("MovieDetail", "전달받은 Movie ID: " + currentMovieId);
 
@@ -89,7 +87,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         ivPoster.setImageResource(android.R.drawable.ic_menu_gallery);
     }
 
-    // [핵심] 실제 API 호출
+    // API 호출
     private void loadMovieDetail(int tmdbId) {
         movieService.getMovieDetail(tmdbId).enqueue(new Callback<MovieDetailResponse>() {
             @Override
@@ -205,7 +203,7 @@ public class MovieDetailActivity extends AppCompatActivity {
                     // [텍스트 변경]
                     btnLike.setText("좋아요");
 
-                    // [핵심] 아이콘을 빨간 하트로 변경 (MaterialButton 전용 메서드)
+                    // 아이콘을 빨간 하트로 변경 (MaterialButton 전용 메서드)
                     btnLike.setIconResource(R.drawable.ic_heart_red);
 
                 } else {
