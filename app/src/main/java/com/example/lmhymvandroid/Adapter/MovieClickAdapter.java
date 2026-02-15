@@ -17,6 +17,7 @@ import com.example.lmhymvandroid.R;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MovieClickAdapter extends RecyclerView.Adapter<MovieClickAdapter.MovieViewHolder> {
 
@@ -66,9 +67,8 @@ public class MovieClickAdapter extends RecyclerView.Adapter<MovieClickAdapter.Mo
             super(itemView);
             ivPoster = itemView.findViewById(R.id.iv_movie_poster);
             tvTitle = itemView.findViewById(R.id.tv_movie_title);
-            tvDesc = itemView.findViewById(R.id.tv_movie_desc);
+            tvDesc = itemView.findViewById(R.id.tv_movie_desc); // 여기가 장르,년도,평점 들어갈 곳
 
-            // 아이템 클릭 시 리스너 호출
             itemView.setOnClickListener(v -> {
                 int pos = getAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && listener != null) {
@@ -80,18 +80,29 @@ public class MovieClickAdapter extends RecyclerView.Adapter<MovieClickAdapter.Mo
         public void bind(MovieItem movie) {
             tvTitle.setText(movie.getTitle());
 
-            // 장르 리스트를 문자열로 변환 (예: "액션, SF")
+            String genreText = "";
             if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
-                tvDesc.setText(TextUtils.join(", ", movie.getGenres()));
+                // 리스트를 문자열로 변환 (예: Action, Drama)
+                genreText = TextUtils.join(", ", movie.getGenres());
             } else {
-                tvDesc.setText("장르 정보 없음");
+                genreText = "장르 정보 없음";
             }
 
-            // Glide로 포스터 이미지 로드
+            // 개봉일 (null 방지)
+            String year = movie.getReleaseYear() != null ? movie.getReleaseYear() : "-";
+
+            // 최종 문자열 포맷: "장르 - 2025-10-15 - ★4.0"
+            String infoText = String.format(Locale.getDefault(), "%s - %s - ★%.1f",
+                    genreText, year, movie.getRating());
+
+            // 3. 텍스트뷰에 적용
+            tvDesc.setText(infoText);
+
+            // 4. 포스터 이미지 로드
             Glide.with(context)
-                    .load(movie.getPosterUrl()) // URL 로드
-                    .placeholder(android.R.drawable.ic_menu_gallery) // 로딩 중 이미지
-                    .error(android.R.drawable.stat_notify_error) // 에러 시 이미지
+                    .load(movie.getPosterUrl())
+                    .placeholder(android.R.drawable.ic_menu_gallery)
+                    .error(android.R.drawable.stat_notify_error)
                     .into(ivPoster);
         }
     }
