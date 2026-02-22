@@ -8,16 +8,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.lmhymvandroid.DTO.UserResponseDTO;
-import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.R;
+import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.example.lmhymvandroid.TokenManager;
 
 import retrofit2.Call;
@@ -39,13 +39,9 @@ public class MyPageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        // 1. 초기화
         tokenManager = new TokenManager(requireContext());
         tvUserName = view.findViewById(R.id.tv_user_name);
         tvUserStatus = view.findViewById(R.id.tv_user_status);
-
-        // 2. 버튼 리스너 설정
         setupButtons(view);
     }
 
@@ -56,7 +52,7 @@ public class MyPageFragment extends Fragment {
         fetchUserInfo();
     }
 
-    // --- [기능 1] 사용자 정보 조회 (GET /api/user/) ---
+    // --- 사용자 정보 조회 ---
     private void fetchUserInfo() {
         String token = tokenManager.getAccessToken();
 
@@ -74,7 +70,7 @@ public class MyPageFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     UserResponseDTO userInfo = response.body();
 
-                    // ★ [핵심] 서버에서 받은 닉네임으로 설정
+                    // 서버에서 받은 닉네임으로 설정
                     String nickname = userInfo.getNickname();
 
                     if (nickname != null && !nickname.isEmpty()) {
@@ -85,19 +81,17 @@ public class MyPageFragment extends Fragment {
 
                 } else {
                     Log.e("MyPage", "정보 조회 실패 Code: " + response.code());
-                    // 토큰 만료 시 처리 등이 필요할 수 있음
                 }
             }
 
             @Override
             public void onFailure(Call<UserResponseDTO> call, Throwable t) {
                 Log.e("MyPage", "네트워크 오류: " + t.getMessage());
-                // tvUserName.setText("연결 실패");
             }
         });
     }
 
-    // --- [기능 2] 버튼 클릭 이벤트 ---
+    // --- 버튼 클릭 이벤트 ---
     private void setupButtons(View view) {
 
         // 1. 내가 좋아하는 영화
@@ -114,7 +108,7 @@ public class MyPageFragment extends Fragment {
             startActivity(intent);
         });
 
-        // 3. 탈퇴하기 (방금 만든 DeleteAccountActivity로 연결)
+        // 3. 탈퇴하기
         LinearLayout btnDeleteAccount = view.findViewById(R.id.btn_delete_account);
         btnDeleteAccount.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), DeleteAccountActivity.class);
@@ -127,7 +121,7 @@ public class MyPageFragment extends Fragment {
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).logout();
             } else {
-                Toast.makeText(getActivity(), "로그아웃을 수행할 수 없습니다.", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getContext(), "로그아웃을 수행할 수 없습니다.");
             }
         });
     }

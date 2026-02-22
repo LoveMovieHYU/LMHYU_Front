@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,6 +20,7 @@ import com.example.lmhymvandroid.DTO.MovieRecommendationResponse;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.google.android.material.slider.Slider;
 
 import java.util.List;
@@ -82,7 +82,7 @@ public class ExploreFragment extends Fragment {
             @Override
             public void onItemClick(MovieItem movie) {
                 // 영화 상세 페이지 이동 로직 (추후 구현)
-                Toast.makeText(getContext(), movie.getTitle() + " 상세 정보", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getContext(), movie.getTitle() + " 상세 정보");
             }
         });
         rvExploreMovieList.setAdapter(adapter);
@@ -124,18 +124,18 @@ public class ExploreFragment extends Fragment {
                     if (movies != null && !movies.isEmpty()) {
                         adapter.setMovieList(movies); // 화면 갱신
                     } else {
-                        Toast.makeText(getContext(), "해당 조건의 추천 영화가 없습니다.", Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getContext(), "해당 조건의 추천 영화가 없습니다.");
                     }
                 } else {
                     Log.e("API_ERROR", "탐색 실패: " + response.code());
-                    Toast.makeText(getContext(), "데이터를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getContext(), "데이터를 불러오지 못했습니다.");
                 }
             }
 
             @Override
             public void onFailure(Call<MovieRecommendationResponse> call, Throwable t) {
                 Log.e("API_FAIL", "통신 실패: " + t.getMessage());
-                Toast.makeText(getContext(), "서버 연결을 확인해주세요.", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(getContext(), "서버 연결을 확인해주세요.");
             }
         });
     }

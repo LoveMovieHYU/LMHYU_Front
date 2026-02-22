@@ -11,7 +11,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,6 +24,7 @@ import com.example.lmhymvandroid.DTO.MovieSearchResponse;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
+import com.example.lmhymvandroid.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +105,7 @@ public class SearchFragment extends Fragment {
         String keyword = etSearchInput.getText().toString().trim();
 
         if (keyword.isEmpty()) {
-            Toast.makeText(getContext(), "검색어를 입력해주세요.", Toast.LENGTH_SHORT).show();
+            ToastUtil.show(getContext(), "검색어를 입력해주세요.");
             return;
         }
 
@@ -126,15 +126,15 @@ public class SearchFragment extends Fragment {
                         layoutEmptyState.setVisibility(View.GONE);
                     } else {
                         showEmptyState();
-                        Toast.makeText(getContext(), "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getContext(), "검색 결과가 없습니다.");
                     }
                 } else {
                     showEmptyState();
                     // 404 등 에러 처리
                     if(response.code() == 404) {
-                        Toast.makeText(getContext(), "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getContext(), "검색 실패: " + response.code());
                     } else {
-                        Toast.makeText(getContext(), "검색 실패: " + response.code(), Toast.LENGTH_SHORT).show();
+                        ToastUtil.show(getContext(), "서버 응답 시간이 초과되었습니다.");
                     }
                 }
             }
@@ -147,9 +147,9 @@ public class SearchFragment extends Fragment {
                 t.printStackTrace();
 
                 if (t instanceof java.net.SocketTimeoutException) {
-                    Toast.makeText(getContext(), "서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.", Toast.LENGTH_LONG).show();
+                    ToastUtil.show(getContext(), "서버 응답 시간이 초과되었습니다. 잠시 후 다시 시도해주세요.");
                 } else {
-                    Toast.makeText(getContext(), "네트워크 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(getContext(), "네트워크 오류가 발생했습니다.");
                 }
             }
         });

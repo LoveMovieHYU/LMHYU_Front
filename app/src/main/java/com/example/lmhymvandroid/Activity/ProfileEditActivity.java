@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -19,6 +18,7 @@ import com.example.lmhymvandroid.DTO.UserResponseDTO;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.example.lmhymvandroid.TokenManager;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -201,18 +201,18 @@ public class ProfileEditActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<UserResponseDTO> call, Throwable t) {
-                Toast.makeText(ProfileEditActivity.this, "정보를 불러오지 못했습니다.", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(ProfileEditActivity.this, "정보를 불러오지 못했습니다.");
             }
         });
     }
 
     private boolean validateInputs(String nickname, String birthdate) {
         if (nickname.isEmpty()) {
-            Toast.makeText(this, "닉네임을 입력해주세요.", Toast.LENGTH_SHORT).show();
+            ToastUtil.show(this, "닉네임을 입력해주세요.");
             return false;
         }
         if (birthdate.isEmpty()) {
-            Toast.makeText(this, "생년월일을 선택해주세요.", Toast.LENGTH_SHORT).show();
+            ToastUtil.show(this, "생년월일을 선택해주세요.");
             return false;
         }
         return true;
@@ -228,15 +228,15 @@ public class ProfileEditActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(ProfileEditActivity.this, "회원 정보가 수정되었습니다.", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(ProfileEditActivity.this, "회원 정보가 수정되었습니다.");
                     finish(); // 수정 완료 후 액티비티 종료
                 } else {
-                    Toast.makeText(ProfileEditActivity.this, "수정 실패", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(ProfileEditActivity.this, "수정 실패");
                 }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(ProfileEditActivity.this, "네트워크 오류", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(ProfileEditActivity.this, "네트워크 오류");
             }
         });
     }
