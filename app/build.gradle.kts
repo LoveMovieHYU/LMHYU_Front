@@ -86,4 +86,6 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
     //로그출력용
     implementation("com.squareup.okhttp3:logging-interceptor:4.10.0")
+    //스플레시 라이브러리
+    implementation("androidx.core:core-splashscreen:1.0.1")
 }

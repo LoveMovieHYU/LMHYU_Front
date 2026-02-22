@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -22,6 +21,7 @@ import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
 import com.example.lmhymvandroid.Service.MovieService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
@@ -52,8 +52,6 @@ public class CreateNicknameActivity extends AppCompatActivity {
         movieService = RetrofitClient.getClient(this).create(MovieService.class);
         initViews();
         setupCalendarLogic();
-
-        // LoginActivity에서 넘어온 누락 필드 안내
         String missing = getIntent().getStringExtra("MISSING_FIELD");
         if (missing != null) Log.d("HYMV_DEBUG", "누락 필드: " + missing);
     }
@@ -79,7 +77,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
     }
 
     private void setupCalendarLogic() {
-        // 1. 타이틀 포맷 설정 (2026년 01월)
+        // 1. 타이틀 포맷 설정
         calendarView.setTitleFormatter(day ->
                 String.format(Locale.KOREA, "%d년 %02d월", day.getYear(), day.getMonth() + 1));
 
@@ -145,7 +143,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
 
     private boolean validateInput(String nick) {
         if (nick.isEmpty() || selectedDate.isEmpty()) {
-            Toast.makeText(this, "닉네임과 생일을 모두 입력해주세요.", Toast.LENGTH_SHORT).show();
+            ToastUtil.show(this, "닉네임과 생일을 모두 입력해주세요.");
             return false;
         }
         return true;
@@ -159,7 +157,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(CreateNicknameActivity.this, "환영합니다! 추천을 시작합니다.", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(CreateNicknameActivity.this, "환영합니다! 추천을 시작합니다.");
 
                     Intent intent = new Intent(CreateNicknameActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -172,7 +170,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
                 Log.e("LMHYU_LOG", "네트워크 에러: " + t.getMessage());
-                Toast.makeText(CreateNicknameActivity.this, "서버 연결 실패", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(CreateNicknameActivity.this, "서버 연결 실패");
             }
         });
     }
@@ -183,11 +181,11 @@ public class CreateNicknameActivity extends AppCompatActivity {
             Log.e("LMHYU_LOG", "에러 상세: " + errorJson);
 
             if (response.code() == 409) {
-                nicknameEditText.setError("이미 사용 중인 닉네임입니다.");
+                ToastUtil.show(CreateNicknameActivity.this, "이미 사용 중인 닉네임입니다.");
             } else if (response.code() == 400) {
-                Toast.makeText(this, "입력 형식이 올바르지 않습니다.", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(this, "입력 형식이 올바르지 않습니다.");
             } else {
-                Toast.makeText(this, "오류가 발생했습니다 (코드: " + response.code() + ")", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(this, "오류가 발생했습니다 (코드: " + response.code() + ")");
             }
         } catch (IOException e) {
             e.printStackTrace();

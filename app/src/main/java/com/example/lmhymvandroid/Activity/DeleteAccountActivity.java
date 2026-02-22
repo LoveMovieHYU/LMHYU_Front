@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.example.lmhymvandroid.TokenManager;
 
 import retrofit2.Call;
@@ -50,7 +50,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
         // 뒤로가기 버튼
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
-        // 2. 라디오 버튼 리스너 (사유 선택 시 동작)
+        // 2. 라디오 버튼 리스너
         radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
             // 버튼 보이게 하기
             btnNext.setVisibility(View.VISIBLE);
@@ -67,14 +67,13 @@ public class DeleteAccountActivity extends AppCompatActivity {
         btnNext.setOnClickListener(v -> showConfirmDialog());
     }
 
-    // --- [팝업] 정말 탈퇴하시겠어요? ---
+    // --- 탈퇴 ---
     private void showConfirmDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_delete_confirm, null);
         builder.setView(view);
 
         AlertDialog dialog = builder.create();
-        // 배경 투명하게 (둥근 모서리 적용을 위해)
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
@@ -93,15 +92,14 @@ public class DeleteAccountActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    // --- [API] 회원 탈퇴 요청 ---
+    // --- 회원 탈퇴 요청 ---
     private void requestDeleteAccount() {
         String token = tokenManager.getAccessToken();
         if (token == null) {
-            Toast.makeText(this, "로그인 정보가 유효하지 않습니다.", Toast.LENGTH_SHORT).show();
+            ToastUtil.show(this, "로그인 정보가 유효하지 않습니다.");
             return;
         }
 
-        // DELETE /api/user/ 호출
         authService.deleteAccount("Bearer " + token).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -110,19 +108,19 @@ public class DeleteAccountActivity extends AppCompatActivity {
                     handleDeleteSuccess();
                 } else {
                     Log.e("DeleteAccount", "탈퇴 실패 Code: " + response.code());
-                    Toast.makeText(DeleteAccountActivity.this, "탈퇴 처리에 실패했습니다.", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(DeleteAccountActivity.this, "탈퇴 처리에 실패했습니다.");
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("DeleteAccount", "Network Error: " + t.getMessage());
-                Toast.makeText(DeleteAccountActivity.this, "네트워크 오류가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(DeleteAccountActivity.this, "네트워크 오류가 발생했습니다.");
             }
         });
     }
 
-    // --- [후처리] 데이터 삭제 및 화면 이동 ---
+    // ---데이터 삭제 및 화면 이동 ---
     private void handleDeleteSuccess() {
         // 1. 토큰 및 저장된 정보 삭제
         tokenManager.clearTokens();

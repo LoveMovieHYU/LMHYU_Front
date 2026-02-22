@@ -36,6 +36,6 @@ public interface AuthService {
     @DELETE("/api/user/")
     Call<Void> deleteAccount(@Header("Authorization") String accessToken);
 
-    @GET("/api/likes")
+    @GET("/api/likes/")
     Call<List<MovieSummaryResponseDTO>> getFavoriteMovies(@Header("Authorization") String accessToken);
 }

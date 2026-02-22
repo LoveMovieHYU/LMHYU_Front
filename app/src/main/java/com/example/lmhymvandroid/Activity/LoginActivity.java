@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +11,7 @@ import com.example.lmhymvandroid.DTO.ProfileCheckResponseDTO;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.example.lmhymvandroid.TokenManager;
 import com.google.gson.Gson;
 
@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(this, "브라우저를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+            ToastUtil.show(this, "브라우저를 열 수 없습니다.");
         }
     }
 

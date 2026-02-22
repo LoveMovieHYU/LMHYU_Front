@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +18,7 @@ import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.google.android.material.button.MaterialButton;
 
 import retrofit2.Call;
@@ -49,7 +49,7 @@ public class MovieDetailActivity extends AppCompatActivity {
         MovieItem movieItem = (MovieItem) getIntent().getSerializableExtra("movie_data");
 
         if (movieItem == null) {
-            Toast.makeText(this, "영화 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            ToastUtil.show(this, "영화 정보를 불러올 수 없습니다.");
             finish();
             return;
         }
@@ -198,7 +198,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Toast.makeText(MovieDetailActivity.this, "좋아요 반영 완료! ❤️", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(MovieDetailActivity.this, "좋아요 반영 완료! ❤️");
 
                     // [텍스트 변경]
                     btnLike.setText("좋아요");
@@ -207,13 +207,13 @@ public class MovieDetailActivity extends AppCompatActivity {
                     btnLike.setIconResource(R.drawable.ic_heart_red);
 
                 } else {
-                    Toast.makeText(MovieDetailActivity.this, "좋아요 실패", Toast.LENGTH_SHORT).show();
+                    ToastUtil.show(MovieDetailActivity.this, "좋아요 실패");
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Toast.makeText(MovieDetailActivity.this, "네트워크 오류", Toast.LENGTH_SHORT).show();
+                ToastUtil.show(MovieDetailActivity.this, "네트워크 오류");
             }
         });
     }

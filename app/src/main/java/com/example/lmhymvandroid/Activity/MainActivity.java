@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
+import com.example.lmhymvandroid.ToastUtil;
 import com.example.lmhymvandroid.TokenManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -26,21 +27,60 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private TokenManager tokenManager;
     private AuthService authService;
+    private boolean isReady = false; // 스플래시 화면 유지 여부를 결정하는 플래그
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // 1. 스플래시 화면 설치 및 대기 설정
+        SplashScreen splashScreen = SplashScreen.installSplashScreen(this);
 
+        // 데이터(토큰) 확인이 끝날 때까지 스플래시 로고를 화면에 고정합니다.
+        splashScreen.setKeepOnScreenCondition(() -> !isReady);
+
+        super.onCreate(savedInstanceState);
+
+        // 2. 관리 도구 초기화
         tokenManager = new TokenManager(this);
         authService = RetrofitClient.getClient(this).create(AuthService.class);
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
-        bottomNav.setOnItemSelectedListener(this);
+        // 3. 로그인 상태 체크 및 분기 처리
+        checkLoginAndSetup(savedInstanceState);
+    }
 
-        if (savedInstanceState == null) {
-            replaceFragment(new RecommendFragment());
+    /**
+     * 로그인 여부를 확인하고 화면을 구성하거나 로그인 액티비티로 이동시킵니다.
+     */
+    private void checkLoginAndSetup(Bundle savedInstanceState) {
+        String refreshToken = tokenManager.getRefreshToken();
+
+        if (refreshToken == null) {
+            // [로그인 안 된 경우] 로그인 액티비티로 즉시 이동
+            Log.d("LoginCheck", "토큰 없음: LoginActivity로 이동");
+            navigateToLogin();
+        } else {
+            // [로그인 된 경우] 메인 화면 레이아웃 구성
+            Log.d("LoginCheck", "토큰 확인됨: 메인 화면 구성 시작");
+            setContentView(R.layout.activity_main);
+
+            // 네비게이션 뷰 설정
+            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+            bottomNav.setOnItemSelectedListener(this);
+
+            // 초기 프래그먼트 설정
+            if (savedInstanceState == null) {
+                replaceFragment(new RecommendFragment());
+            }
+
+            // 모든 설정이 완료되었으므로 스플래시 화면을 걷어냅니다.
+            isReady = true;
         }
+    }
+
+    private void navigateToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void replaceFragment(Fragment fragment) {
@@ -67,46 +107,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
 
     /**
-     * 로그아웃 요청 메서드
-     *
+     * 로그아웃 요청 및 클라이언트 데이터 정리
      */
     public void logout() {
-        Log.d("Logout", "로그아웃 프로세스 시작");
-
-        // 1. 서버에 로그아웃 알림
         authService.logout().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                    Log.d("Logout", "서버 로그아웃 성공");
-                } else {
-                    Log.e("Logout", "서버 응답 에러: " + response.code());
-                }
                 performClientSideLogout();
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("Logout", "네트워크 에러로 API 호출 실패", t);
                 performClientSideLogout();
             }
         });
     }
 
-    /**
-     * 클라이언트 데이터 정리 및 화면 전환
-     */
     private void performClientSideLogout() {
         tokenManager.clearTokens();
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-        try {
-            startActivity(intent);
-            Toast.makeText(this, "성공적으로 로그아웃되었습니다.", Toast.LENGTH_SHORT).show();
-            finish(); // ◀ 현재 MainActivity 종료
-        } catch (Exception e) {
-            Log.e("Logout", "LoginActivity 시작 실패. 메니페스트를 확인하세요.", e);
-        }
+        ToastUtil.show(this, "성공적으로 로그아웃되었습니다.");
+        navigateToLogin();
     }
 }
