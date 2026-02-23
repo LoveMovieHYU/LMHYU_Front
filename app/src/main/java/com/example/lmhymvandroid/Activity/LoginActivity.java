@@ -33,10 +33,10 @@ public class LoginActivity extends AppCompatActivity {
 
         // 구글/네이버 로그인 버튼 설정
         findViewById(R.id.sign_in_button).setOnClickListener(v ->
-                openWebBrowser("http://10.0.2.2.nip.io:8080/oauth2/authorization/google"));
+                openWebBrowser("http://161.33.10.6.nip.io:8080/oauth2/authorization/google"));
 
         findViewById(R.id.button_naver_login).setOnClickListener(v ->
-                openWebBrowser("http://10.0.2.2:8080/oauth2/authorization/naver"));
+                openWebBrowser("http://161.33.10.6:8080/oauth2/authorization/naver"));
 
         handleDeepLink(getIntent());
     }
