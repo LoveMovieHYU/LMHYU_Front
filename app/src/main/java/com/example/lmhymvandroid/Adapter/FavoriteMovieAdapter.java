@@ -21,9 +21,16 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
     private Context context;
     private List<MovieSummaryResponseDTO> movies;
 
-    public FavoriteMovieAdapter(Context context, List<MovieSummaryResponseDTO> movies) {
+    public interface OnItemClickListener {
+        void onItemClick(MovieSummaryResponseDTO movie);
+    }
+    private OnItemClickListener listener;
+
+
+    public FavoriteMovieAdapter(Context context, List<MovieSummaryResponseDTO> movies, OnItemClickListener listener) {
         this.context = context;
         this.movies = movies;
+        this.listener = listener;
     }
 
     @NonNull
@@ -52,6 +59,12 @@ public class FavoriteMovieAdapter extends RecyclerView.Adapter<FavoriteMovieAdap
                 .placeholder(R.color.loading_gray) // 로딩 중 색상
                 .error(R.color.loading_gray)       // 에러 시 색상
                 .into(holder.ivPoster);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(movie);
+            }
+        });
     }
 
     @Override

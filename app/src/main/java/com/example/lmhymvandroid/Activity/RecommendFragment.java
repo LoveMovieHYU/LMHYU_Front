@@ -1,10 +1,13 @@
 package com.example.lmhymvandroid.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,9 +22,11 @@ import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -29,6 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RecommendFragment extends Fragment {
+
     private TextView tvPhysical, tvEmotional, tvIntellectual, tvStatusMsg;
     private RecyclerView rvMovieList;
     private MovieClickAdapter adapter;
@@ -49,8 +55,7 @@ public class RecommendFragment extends Fragment {
         initRetrofit();
 
         loadBiorhythmData();
-
-        loadTestMovies();
+        loadRecommendedMovies();
     }
 
     private void initViews(View view) {
@@ -62,10 +67,19 @@ public class RecommendFragment extends Fragment {
         rvMovieList = view.findViewById(R.id.rv_movie_list);
         rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        btnMore = view.findViewById(R.id.btn_more);
+        btnMore.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
+                bottomNav.setSelectedItemId(R.id.nav_explore);
+            }
+        });
+
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MovieItem movie) {
-                android.content.Intent intent = new android.content.Intent(getContext(), MovieDetailActivity.class);
+                Toast.makeText(getContext(), movie.getTitle() + " 선택", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), MovieDetailActivity.class);
                 intent.putExtra("movie_data", movie);
                 startActivity(intent);
             }
@@ -84,13 +98,18 @@ public class RecommendFragment extends Fragment {
             @Override
             public void onResponse(Call<BiorhythmResponse> call, Response<BiorhythmResponse> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    updateBiorhythmUI(response.body());
+                    BiorhythmResponse data = response.body();
+                    updateBiorhythmUI(data);
+                } else {
+                    tvStatusMsg.setText("데이터 분석에 실패했습니다.");
+                    Log.e("API_ERROR", "분석 요청 실패: " + response.code());
                 }
             }
 
             @Override
             public void onFailure(Call<BiorhythmResponse> call, Throwable t) {
-                // 에러 처리
+                tvStatusMsg.setText("서버 연결 상태를 확인해주세요.");
+                Log.e("API_FAIL", t.getMessage());
             }
         });
     }
@@ -103,48 +122,38 @@ public class RecommendFragment extends Fragment {
         tvStatusMsg.setText(data.getStatusMessage());
     }
 
-    private void loadTestMovies() {
-        List<MovieItem> testList = new ArrayList<>();
+    private void loadRecommendedMovies() {
+        movieService.getRecommendedMovies().enqueue(new Callback<List<MovieItem>>() {
+            @Override
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<MovieItem> movies = response.body();
 
-        // TMDB 이미지 기본 URL (포스터 URL이 /로 시작하므로 앞에 붙여줘야 함)
-        String imageBaseUrl = "https://image.tmdb.org/t/p/w500";
+                    // 평점(Rating) 기준으로 내림차순 정렬
+                    Collections.sort(movies, new Comparator<MovieItem>() {
+                        @Override
+                        public int compare(MovieItem m1, MovieItem m2) {
+                            return Double.compare(m2.getRating(), m1.getRating());
+                        }
+                    });
 
-        // 1. 우리의 잘못
-        testList.add(new MovieItem(
-                1156594,
-                "우리의 잘못",
-                imageBaseUrl + "/yCbT1nKemh1AuQgdbns5Cf1RmRj.jpg",
-                4.0,
-                "2025-10-15",
-                Arrays.asList("앙앙") // 장르 리스트
-        ));
+                    // 상위 3개만 뽑아내기 (리스트 크기가 3보다 작을 수 있으므로 예외처리 포함)
+                    int limit = Math.min(movies.size(), 3);
+                    List<MovieItem> top3Movies = new ArrayList<>(movies.subList(0, limit));
 
-        // 2. 마르코
-        testList.add(new MovieItem(
-                1186350,
-                "마르코",
-                imageBaseUrl + "/6Nj8Y1A9lcReqZZvRHOSiO3iTl6.jpg",
-                4.0,
-                "2025-10-15",
-                Arrays.asList("앙앙")
-        ));
+                    // 3개로 추려진 리스트를 어댑터에 전달
+                    adapter.setMovieList(top3Movies);
 
-        // 3. 쥬라기 월드: 새로운 시작
-        testList.add(new MovieItem(
-                1234821,
-                "쥬라기 월드: 새로운 시작",
-                imageBaseUrl + "/ygr4hE8Qpagv8sxZbMw1mtYkcQE.jpg",
-                4.0,
-                "2025-10-15",
-                Arrays.asList("앙앙")
-        ));
+                } else {
+                    Log.e("API_ERROR", "영화 리스트 로드 실패: " + response.code());
+                    tvStatusMsg.setText("추천 영화를 불러오지 못했습니다.");
+                }
+            }
 
-        // 어댑터에 데이터 세팅
-        adapter.setMovieList(testList);
-
-        // UI에 "테스트 모드입니다" 표시 (선택사항)
-        if (tvStatusMsg != null) {
-            tvStatusMsg.setText("현재 테스트 데이터 표시 중입니다.");
-        }
+            @Override
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Log.e("API_FAIL", t.getMessage());
+            }
+        });
     }
 }
