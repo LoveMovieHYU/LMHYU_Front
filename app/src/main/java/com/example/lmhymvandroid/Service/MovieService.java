@@ -44,7 +44,7 @@ public interface MovieService {
 
     // 영화 상세 조회 API
     @GET("/api/movies")
-    Call<MovieDetailResponse> getMovieDetail(@Query("movieId") long tmdbId);
+    Call<MovieDetailResponse> getMovieDetail(@Query("tmdbId") long tmdbId);
 
     @GET("/api/movies/search")
     Call<List<MovieSearchResponse>> searchMovies(
