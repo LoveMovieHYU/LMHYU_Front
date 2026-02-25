@@ -71,6 +71,12 @@ public class FavoriteMoviesActivity extends AppCompatActivity {
         fetchFavoriteMovies();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchFavoriteMovies(); // 화면에 돌아올 때마다 최신 좋아요 목록으로 새로고침
+    }
+
     private void fetchFavoriteMovies() {
         String token = tokenManager.getAccessToken();
         if (token == null) {

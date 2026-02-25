@@ -31,6 +31,8 @@ public class MovieDetailActivity extends AppCompatActivity {
     private MovieService movieService;
     private long currentMovieId;
 
+    private boolean isLiked = false;
+
     // UI 변수
     private ImageView ivPoster, btnBack;
     private TextView tvTitle, tvInfo, tvSummary;
@@ -65,7 +67,13 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         // 4. 버튼 리스너
         btnBack.setOnClickListener(v -> finish());
-        btnLike.setOnClickListener(v -> requestLikeMovie());
+        btnLike.setOnClickListener(v -> {
+            if (isLiked) {
+                requestUnlikeMovie(); // 이미 좋아요 상태면 취소 요청
+            } else {
+                requestLikeMovie();   // 좋아요 상태가 아니면 좋아요 요청
+            }
+        });
     }
 
     private void initViews() {
@@ -163,6 +171,21 @@ public class MovieDetailActivity extends AppCompatActivity {
                 }
             }
         }
+
+        this.isLiked = detail.isLiked();
+        updateLikeButtonUI();
+    }
+
+    private void updateLikeButtonUI() {
+        if (isLiked) {
+            btnLike.setText("좋아요");
+            //btnLike.setIconResource(R.drawable.ic_heart_red);
+            btnLike.setIconTintResource(R.color.red);
+        } else {
+            btnLike.setText("좋아요");
+
+            btnLike.setIconTintResource(R.color.black);
+        }
     }
 
     // 배우/감독 뷰 생성
@@ -200,17 +223,35 @@ public class MovieDetailActivity extends AppCompatActivity {
                 if (response.isSuccessful()) {
                     ToastUtil.show(MovieDetailActivity.this, "좋아요 반영 완료! ❤️");
 
-                    // [텍스트 변경]
-                    btnLike.setText("좋아요");
-
-                    // 아이콘을 빨간 하트로 변경 (MaterialButton 전용 메서드)
-                    btnLike.setIconResource(R.drawable.ic_heart_red);
+                    isLiked = true;
+                    updateLikeButtonUI();
 
                 } else {
                     ToastUtil.show(MovieDetailActivity.this, "좋아요 실패");
                 }
             }
 
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                ToastUtil.show(MovieDetailActivity.this, "네트워크 오류");
+            }
+        });
+    }
+
+    private void requestUnlikeMovie() {
+        movieService.deleteLike(currentMovieId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    ToastUtil.show(MovieDetailActivity.this, "좋아요 취소 완료! 💔");
+
+                    // 🔥 상태 변경 및 UI 업데이트
+                    isLiked = false;
+                    updateLikeButtonUI();
+                } else {
+                    ToastUtil.show(MovieDetailActivity.this, "좋아요 취소 실패");
+                }
+            }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 ToastUtil.show(MovieDetailActivity.this, "네트워크 오류");

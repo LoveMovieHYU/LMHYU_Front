@@ -30,6 +30,9 @@ public class MovieDetailResponse implements Serializable {
     @SerializedName("actors")
     private List<PersonDTO> actors;    // 배우 리스트
 
+    @SerializedName("liked")
+    private boolean isLiked;
+
     // ==========================================
     // Getter Methods
     // ==========================================
@@ -41,6 +44,8 @@ public class MovieDetailResponse implements Serializable {
     public String getPosterPath() { return posterPath; }
     public List<PersonDTO> getDirectors() { return directors; }
     public List<PersonDTO> getActors() { return actors; }
+
+    public boolean isLiked() { return isLiked; }
 
     // ==========================================
     // 내부 클래스: PersonDTO (백엔드 코드와 일치시킴)
