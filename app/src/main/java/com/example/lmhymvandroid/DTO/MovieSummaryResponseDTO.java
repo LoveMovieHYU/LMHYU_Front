@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class MovieSummaryResponseDTO {
-    @SerializedName("movieId")
+    @SerializedName("tmdbId")
     private int id;
     @SerializedName("movieTitle")
     private String title;
