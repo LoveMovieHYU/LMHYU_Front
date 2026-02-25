@@ -5,7 +5,6 @@ import com.example.lmhymvandroid.DTO.HomeResponse;
 import com.example.lmhymvandroid.DTO.LikeRequest;
 import com.example.lmhymvandroid.DTO.MovieDetailResponse;
 import com.example.lmhymvandroid.DTO.MovieItem;
-import com.example.lmhymvandroid.DTO.MovieRecommendationResponse;
 import com.example.lmhymvandroid.DTO.MovieSearchResponse;
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 
@@ -33,7 +32,7 @@ public interface MovieService {
 
     // 예시: /api/recommend/custom/list?p=50.0&e=-20.0&i=10.0
     @GET("/api/recommend/custom/list")
-    Call<MovieRecommendationResponse> getCustomRecommendations(
+    Call<List<MovieItem>> getCustomRecommendations(
             @Query("p") float physical,    // 신체 지수 (Green)
             @Query("e") float emotional,   // 감정 지수 (Pink)
             @Query("i") float intellectual // 지성 지수 (Blue)
@@ -41,11 +40,11 @@ public interface MovieService {
 
     // POST /api/likes/{movieId}
     @POST("/api/likes/{movieId}")
-    Call<Void> postLike(@Path("movieId") int movieId, @Body LikeRequest request);
+    Call<Void> postLike(@Path("movieId") long movieId, @Body LikeRequest request);
 
-    // [참고] 영화 상세 조회 API (질문하신 내용 관련)
+    // 영화 상세 조회 API
     @GET("/api/movies")
-    Call<MovieDetailResponse> getMovieDetail(@Query("movieId") int tmdbId);
+    Call<MovieDetailResponse> getMovieDetail(@Query("movieId") long tmdbId);
 
     @GET("/api/movies/search")
     Call<List<MovieSearchResponse>> searchMovies(

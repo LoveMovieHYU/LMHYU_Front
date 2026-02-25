@@ -29,7 +29,7 @@ public class MovieDetailActivity extends AppCompatActivity {
 
     private MaterialButton btnLike;
     private MovieService movieService;
-    private int currentMovieId;
+    private long currentMovieId;
 
     // UI 변수
     private ImageView ivPoster, btnBack;
@@ -54,7 +54,7 @@ public class MovieDetailActivity extends AppCompatActivity {
             return;
         }
 
-        currentMovieId = movieItem.getMovieId();
+        currentMovieId = movieItem.getId();
         Log.d("MovieDetail", "전달받은 Movie ID: " + currentMovieId);
 
         // 2. 화면 초기화 (로딩 상태 표시)
@@ -88,7 +88,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     }
 
     // API 호출
-    private void loadMovieDetail(int tmdbId) {
+    private void loadMovieDetail(long tmdbId) {
         movieService.getMovieDetail(tmdbId).enqueue(new Callback<MovieDetailResponse>() {
             @Override
             public void onResponse(Call<MovieDetailResponse> call, Response<MovieDetailResponse> response) {

@@ -1,5 +1,6 @@
 package com.example.lmhymvandroid.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,13 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lmhymvandroid.Adapter.MovieClickAdapter;
 import com.example.lmhymvandroid.DTO.MovieItem;
-import com.example.lmhymvandroid.DTO.MovieRecommendationResponse;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
 import com.example.lmhymvandroid.ToastUtil;
 import com.google.android.material.slider.Slider;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -81,8 +84,9 @@ public class ExploreFragment extends Fragment {
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MovieItem movie) {
-                // 영화 상세 페이지 이동 로직 (추후 구현)
-                ToastUtil.show(getContext(), movie.getTitle() + " 상세 정보");
+                Intent intent = new Intent(getContext(), MovieDetailActivity.class);
+                intent.putExtra("movie_data", movie); // 영화 데이터를 통째로 넘겨줌
+                startActivity(intent);
             }
         });
         rvExploreMovieList.setAdapter(adapter);
@@ -115,14 +119,28 @@ public class ExploreFragment extends Fragment {
 
     // API 호출 함수
     private void loadCustomMovies(float p, float e, float i) {
-        movieService.getCustomRecommendations(p, e, i).enqueue(new Callback<MovieRecommendationResponse>() {
-            @Override
-            public void onResponse(Call<MovieRecommendationResponse> call, Response<MovieRecommendationResponse> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    List<MovieItem> movies = response.body().getMovieList();
 
-                    if (movies != null && !movies.isEmpty()) {
-                        adapter.setMovieList(movies); // 화면 갱신
+        movieService.getCustomRecommendations(p, e, i).enqueue(new Callback<List<MovieItem>>() {
+            @Override
+            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    List<MovieItem> movies = response.body();
+
+                    if (!movies.isEmpty()) {
+                        // 평점(Rating) 기준으로 내림차순 정렬
+                        Collections.sort(movies, new Comparator<MovieItem>() {
+                            @Override
+                            public int compare(MovieItem m1, MovieItem m2) {
+                                return Double.compare(m2.getRating(), m1.getRating());
+                            }
+                        });
+
+                        // 상위 3개만 뽑아내기
+                        int limit = Math.min(movies.size(), 3);
+                        List<MovieItem> top3Movies = new ArrayList<>(movies.subList(0, limit));
+
+                        // 어댑터에 3개의 영화 전달
+                        adapter.setMovieList(top3Movies);
                     } else {
                         ToastUtil.show(getContext(), "해당 조건의 추천 영화가 없습니다.");
                     }
@@ -133,8 +151,10 @@ public class ExploreFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<MovieRecommendationResponse> call, Throwable t) {
-                Log.e("API_FAIL", "통신 실패: " + t.getMessage());
+            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                Log.e("API_FAIL", "통신/파싱 실패 원인: " + t.getMessage());
+                t.printStackTrace();
+
                 ToastUtil.show(getContext(), "서버 연결을 확인해주세요.");
             }
         });

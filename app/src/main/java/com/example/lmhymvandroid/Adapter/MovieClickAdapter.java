@@ -24,7 +24,6 @@ public class MovieClickAdapter extends RecyclerView.Adapter<MovieClickAdapter.Mo
     private Context context;
     private List<MovieItem> movieList = new ArrayList<>();
 
-    // 클릭 이벤트를 위한 인터페이스 정의
     public interface OnItemClickListener {
         void onItemClick(MovieItem movie);
     }
@@ -82,25 +81,28 @@ public class MovieClickAdapter extends RecyclerView.Adapter<MovieClickAdapter.Mo
 
             String genreText = "";
             if (movie.getGenres() != null && !movie.getGenres().isEmpty()) {
-                // 리스트를 문자열로 변환 (예: Action, Drama)
-                genreText = TextUtils.join(", ", movie.getGenres());
+                List<String> genreNames = new ArrayList<>();
+                for (int i = 0; i < movie.getGenres().size(); i++) {
+                    genreNames.add(movie.getGenres().get(i).getGenre());
+                }
+                genreText = TextUtils.join(", ", genreNames);
             } else {
                 genreText = "장르 정보 없음";
             }
 
-            // 개봉일 (null 방지)
-            String year = movie.getReleaseYear() != null ? movie.getReleaseYear() : "-";
+            String year = movie.getReleaseDate() != null ? movie.getReleaseDate() : "-";
 
-            // 최종 문자열 포맷: "장르 - 2025-10-15 - ★4.0"
             String infoText = String.format(Locale.getDefault(), "%s - %s - ★%.1f",
                     genreText, year, movie.getRating());
-
-            // 3. 텍스트뷰에 적용
             tvDesc.setText(infoText);
 
-            // 4. 포스터 이미지 로드
+            String imageUrl = movie.getPosterUrl();
+            if (imageUrl != null && !imageUrl.startsWith("http")) {
+                imageUrl = "https://image.tmdb.org/t/p/w500" + imageUrl;
+            }
+
             Glide.with(context)
-                    .load(movie.getPosterUrl())
+                    .load(imageUrl)
                     .placeholder(android.R.drawable.ic_menu_gallery)
                     .error(android.R.drawable.stat_notify_error)
                     .into(ivPoster);

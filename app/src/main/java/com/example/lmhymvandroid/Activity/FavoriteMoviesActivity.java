@@ -1,5 +1,6 @@
 package com.example.lmhymvandroid.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lmhymvandroid.Adapter.FavoriteMovieAdapter;
+import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.MovieSummaryResponseDTO;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
@@ -44,7 +46,27 @@ public class FavoriteMoviesActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rv_favorite_movies);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         recyclerView.setLayoutManager(gridLayoutManager);
-        adapter = new FavoriteMovieAdapter(this, movieList);
+        adapter = new FavoriteMovieAdapter(this, movieList, new FavoriteMovieAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(MovieSummaryResponseDTO movieSummary) {
+                int movieId = movieSummary.getId();
+                String title = movieSummary.getTitle();
+                String posterUrl = movieSummary.getPosterPath();
+
+                MovieItem tempMovieItem = new MovieItem(
+                        movieId,
+                        title,
+                        posterUrl,
+                        0.0,
+                        "-",
+                        new ArrayList<>()
+                );
+
+                Intent intent = new Intent(FavoriteMoviesActivity.this, MovieDetailActivity.class);
+                intent.putExtra("movie_data", tempMovieItem);
+                startActivity(intent);
+            }
+        });
         recyclerView.setAdapter(adapter);
         fetchFavoriteMovies();
     }

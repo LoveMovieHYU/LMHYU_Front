@@ -161,7 +161,7 @@ public class SearchFragment extends Fragment {
         for (MovieSearchResponse res : searchResults) {
 
             double defaultRating = 0.0;
-            List<String> defaultGenres = new ArrayList<>(); // 빈 리스트
+            List<MovieItem.GenreItem> defaultGenres = new ArrayList<>(); // 빈 리스트
 
             MovieItem item = new MovieItem(
                     res.getMovieId(),
