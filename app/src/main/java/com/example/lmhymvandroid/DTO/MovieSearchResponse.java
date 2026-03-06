@@ -3,7 +3,7 @@ package com.example.lmhymvandroid.DTO;
 import com.google.gson.annotations.SerializedName;
 
 public class MovieSearchResponse {
-    @SerializedName("movieId")
+    @SerializedName("tmdbId")
     private int movieId;
 
     @SerializedName("title")

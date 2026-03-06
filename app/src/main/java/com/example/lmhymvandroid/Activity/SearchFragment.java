@@ -15,10 +15,10 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.lmhymvandroid.Adapter.MovieClickAdapter;
+import com.example.lmhymvandroid.Adapter.SearchMovieGridAdapter;
 import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.MovieSearchResponse;
 import com.example.lmhymvandroid.R;
@@ -40,7 +40,7 @@ public class SearchFragment extends Fragment {
     private LinearLayout layoutEmptyState;
     private RecyclerView rvSearchResult;
 
-    private MovieClickAdapter adapter;
+    private SearchMovieGridAdapter adapter;
     private MovieService movieService;
 
     @Nullable
@@ -53,22 +53,18 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. 뷰 초기화
         etSearchInput = view.findViewById(R.id.et_search_input);
         btnBack = view.findViewById(R.id.btn_back);
         layoutEmptyState = view.findViewById(R.id.layout_empty_state);
         rvSearchResult = view.findViewById(R.id.rv_search_result);
 
-        // 2. 서비스 연결
         if (getContext() != null) {
             movieService = RetrofitClient.getClient(getContext()).create(MovieService.class);
         }
 
-        // 3. 리사이클러뷰 설정
-        rvSearchResult.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvSearchResult.setLayoutManager(new GridLayoutManager(getContext(), 3));
 
-        // 클릭 시 상세 페이지로 이동하도록 설정
-        adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
+        adapter = new SearchMovieGridAdapter(getContext(), new SearchMovieGridAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MovieItem movie) {
                 Intent intent = new Intent(getContext(), MovieDetailActivity.class);
@@ -78,10 +74,8 @@ public class SearchFragment extends Fragment {
         });
         rvSearchResult.setAdapter(adapter);
 
-        // 4. 리스너 설정
         setupListeners();
 
-        // 키보드 올리기
         etSearchInput.requestFocus();
         showKeyboard();
     }
@@ -118,9 +112,7 @@ public class SearchFragment extends Fragment {
                     List<MovieSearchResponse> resultList = response.body();
 
                     if (!resultList.isEmpty()) {
-                        // [데이터 변환] SearchResponse -> MovieItem
                         List<MovieItem> movieItems = convertToMovieItems(resultList);
-
                         adapter.setMovieList(movieItems);
                         rvSearchResult.setVisibility(View.VISIBLE);
                         layoutEmptyState.setVisibility(View.GONE);
@@ -130,7 +122,6 @@ public class SearchFragment extends Fragment {
                     }
                 } else {
                     showEmptyState();
-                    // 404 등 에러 처리
                     if(response.code() == 404) {
                         ToastUtil.show(getContext(), "검색 실패: " + response.code());
                     } else {
@@ -142,8 +133,6 @@ public class SearchFragment extends Fragment {
             @Override
             public void onFailure(Call<List<MovieSearchResponse>> call, Throwable t) {
                 showEmptyState();
-
-                // 로그에 정확한 에러 원인 출력
                 t.printStackTrace();
 
                 if (t instanceof java.net.SocketTimeoutException) {
@@ -159,9 +148,8 @@ public class SearchFragment extends Fragment {
         List<MovieItem> items = new ArrayList<>();
 
         for (MovieSearchResponse res : searchResults) {
-
             double defaultRating = 0.0;
-            List<MovieItem.GenreItem> defaultGenres = new ArrayList<>(); // 빈 리스트
+            List<MovieItem.GenreItem> defaultGenres = new ArrayList<>();
 
             MovieItem item = new MovieItem(
                     res.getMovieId(),
