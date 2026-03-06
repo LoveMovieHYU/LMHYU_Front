@@ -6,12 +6,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView; // 🌟 추가됨
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,9 +22,7 @@ import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -39,7 +37,7 @@ public class RecommendFragment extends Fragment {
     private RecyclerView rvMovieList;
     private MovieClickAdapter adapter;
     private MovieService movieService;
-    private AppCompatButton btnMore;
+    private ImageView btnMenu;
 
     @Nullable
     @Override
@@ -67,18 +65,14 @@ public class RecommendFragment extends Fragment {
         rvMovieList = view.findViewById(R.id.rv_movie_list);
         rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        btnMore = view.findViewById(R.id.btn_more);
-        btnMore.setOnClickListener(v -> {
-            if (getActivity() != null) {
-                BottomNavigationView bottomNav = getActivity().findViewById(R.id.bottom_navigation);
-                bottomNav.setSelectedItemId(R.id.nav_explore);
-            }
+        btnMenu = view.findViewById(R.id.btn_menu);
+        btnMenu.setOnClickListener(v -> {
+            Toast.makeText(getContext(), "메뉴 클릭됨 (추후 프로필 창 연동)", Toast.LENGTH_SHORT).show();
         });
 
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(MovieItem movie) {
-                Toast.makeText(getContext(), movie.getTitle() + " 선택", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getContext(), MovieDetailActivity.class);
                 intent.putExtra("movie_data", movie);
                 startActivity(intent);
@@ -129,7 +123,6 @@ public class RecommendFragment extends Fragment {
                 if (response.isSuccessful() && response.body() != null) {
                     List<MovieItem> movies = response.body();
 
-                    // 평점(Rating) 기준으로 내림차순 정렬
                     Collections.sort(movies, new Comparator<MovieItem>() {
                         @Override
                         public int compare(MovieItem m1, MovieItem m2) {
@@ -137,12 +130,7 @@ public class RecommendFragment extends Fragment {
                         }
                     });
 
-                    // 상위 3개만 뽑아내기 (리스트 크기가 3보다 작을 수 있으므로 예외처리 포함)
-                    int limit = Math.min(movies.size(), 3);
-                    List<MovieItem> top3Movies = new ArrayList<>(movies.subList(0, limit));
-
-                    // 3개로 추려진 리스트를 어댑터에 전달
-                    adapter.setMovieList(top3Movies);
+                    adapter.setMovieList(movies);
 
                 } else {
                     Log.e("API_ERROR", "영화 리스트 로드 실패: " + response.code());
