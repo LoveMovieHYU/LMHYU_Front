@@ -23,7 +23,6 @@ import com.example.lmhymvandroid.Service.MovieService;
 import com.example.lmhymvandroid.ToastUtil;
 import com.google.android.material.slider.Slider;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -127,7 +126,6 @@ public class ExploreFragment extends Fragment {
                     List<MovieItem> movies = response.body();
 
                     if (!movies.isEmpty()) {
-                        // 평점(Rating) 기준으로 내림차순 정렬
                         Collections.sort(movies, new Comparator<MovieItem>() {
                             @Override
                             public int compare(MovieItem m1, MovieItem m2) {
@@ -135,12 +133,7 @@ public class ExploreFragment extends Fragment {
                             }
                         });
 
-                        // 상위 3개만 뽑아내기
-                        int limit = Math.min(movies.size(), 3);
-                        List<MovieItem> top3Movies = new ArrayList<>(movies.subList(0, limit));
-
-                        // 어댑터에 3개의 영화 전달
-                        adapter.setMovieList(top3Movies);
+                        adapter.setMovieList(movies);
                     } else {
                         ToastUtil.show(getContext(), "해당 조건의 추천 영화가 없습니다.");
                     }
