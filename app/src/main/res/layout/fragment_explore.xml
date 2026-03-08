@@ -200,7 +200,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_rounded_gray"
+            android:background="@drawable/bg_rounded_navy"
             android:padding="16dp"
             android:text="감정을 낮추고 지성을 높이면 차분하고 몰입감 있는 영화가 추천돼요"
             android:textColor="#374151"

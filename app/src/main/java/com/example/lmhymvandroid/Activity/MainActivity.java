@@ -8,6 +8,8 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
+import androidx.core.view.GravityCompat; // ★ 추가된 import (드로어 방향 설정)
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -27,7 +29,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     private TokenManager tokenManager;
     private AuthService authService;
-    private boolean isReady = false; // 스플래시 화면 유지 여부를 결정하는 플래그
+    private boolean isReady = false;
+    private DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +65,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Log.d("LoginCheck", "토큰 확인됨: 메인 화면 구성 시작");
             setContentView(R.layout.activity_main);
 
+            // ★ 드로어 레이아웃 초기화 (XML의 id와 일치해야 함)
+            drawerLayout = findViewById(R.id.drawer_layout);
+
             // 네비게이션 뷰 설정
             BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
             bottomNav.setOnItemSelectedListener(this);
@@ -69,10 +75,29 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             // 초기 프래그먼트 설정
             if (savedInstanceState == null) {
                 replaceFragment(new RecommendFragment());
+
+                // ★ 중요: 오른쪽 서랍(Drawer) 컨테이너에 마이페이지 프래그먼트를 미리 세팅해 둡니다.
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.drawer_my_page_container, new MyPageFragment())
+                        .commit();
             }
 
             // 모든 설정이 완료되었으므로 스플래시 화면을 걷어냅니다.
             isReady = true;
+        }
+    }
+
+    // ★ 햄버거 버튼을 누르면 호출할 메서드 (우측 드로어 열기)
+    public void openMyPageDrawer() {
+        if (drawerLayout != null && !drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.openDrawer(GravityCompat.END);
+        }
+    }
+
+    // ★ X 버튼을 누르면 호출할 메서드 (우측 드로어 닫기)
+    public void closeMyPageDrawer() {
+        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout.closeDrawer(GravityCompat.END);
         }
     }
 
@@ -99,10 +124,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         } else if (itemId == R.id.nav_explore) {
             replaceFragment(new ExploreFragment());
             return true;
-        } else if (itemId == R.id.nav_mypage) {
-            replaceFragment(new MyPageFragment());
-            return true;
         }
+        // ★ 기존의 nav_mypage 조건은 드로어로 대체되었으므로 삭제했습니다.
         return false;
     }
 

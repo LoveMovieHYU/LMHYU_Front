@@ -6,19 +6,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.lmhymvandroid.Adapter.HorizontalMovieAdapter;
+import com.example.lmhymvandroid.DTO.MovieSummaryResponseDTO;
 import com.example.lmhymvandroid.DTO.UserResponseDTO;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
-import com.example.lmhymvandroid.ToastUtil;
 import com.example.lmhymvandroid.TokenManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,8 +33,13 @@ import retrofit2.Response;
 public class MyPageFragment extends Fragment {
 
     private TextView tvUserName;
-    private TextView tvUserStatus;
     private TokenManager tokenManager;
+    private AuthService authService;
+
+    // 가로 스크롤 관련 변수
+    private RecyclerView rvLikedMovies;
+    private HorizontalMovieAdapter movieAdapter;
+    private List<MovieSummaryResponseDTO> likedMovieList = new ArrayList<>();
 
     @Nullable
     @Override
@@ -39,51 +50,42 @@ public class MyPageFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         tokenManager = new TokenManager(requireContext());
+        authService = RetrofitClient.getClient(requireContext()).create(AuthService.class);
+
         tvUserName = view.findViewById(R.id.tv_user_name);
-        tvUserStatus = view.findViewById(R.id.tv_user_status);
+
+        // 1. 가로 스크롤 리사이클러뷰 설정
+        rvLikedMovies = view.findViewById(R.id.rv_liked_movies_horizontal);
+        // XML에서 지정했지만 확실히 하기 위해 자바에서도 설정
+        rvLikedMovies.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        movieAdapter = new HorizontalMovieAdapter(getContext(), likedMovieList);
+        rvLikedMovies.setAdapter(movieAdapter);
+
+        // 2. 버튼 리스너 연결
         setupButtons(view);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // 화면이 다시 보일 때마다 최신 정보(닉네임 등) 갱신
         fetchUserInfo();
+        fetchLikedMovies(); // 좋아요한 영화 목록 불러오기 추가
     }
 
-    // --- 사용자 정보 조회 ---
     private void fetchUserInfo() {
         String token = tokenManager.getAccessToken();
+        if (token == null) return;
 
-        if (token == null) {
-            tvUserName.setText("로그인 필요");
-            return;
-        }
-
-        AuthService authService = RetrofitClient.getClient(requireContext()).create(AuthService.class);
-
-        // 헤더에 토큰 포함하여 요청
         authService.getUserInfo("Bearer " + token).enqueue(new Callback<UserResponseDTO>() {
             @Override
             public void onResponse(Call<UserResponseDTO> call, Response<UserResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    UserResponseDTO userInfo = response.body();
-
-                    // 서버에서 받은 닉네임으로 설정
-                    String nickname = userInfo.getNickname();
-
-                    if (nickname != null && !nickname.isEmpty()) {
-                        tvUserName.setText(nickname);
-                    } else {
-                        tvUserName.setText("닉네임 없음");
-                    }
-
-                } else {
-                    Log.e("MyPage", "정보 조회 실패 Code: " + response.code());
+                    String nickname = response.body().getNickname();
+                    tvUserName.setText(nickname != null && !nickname.isEmpty() ? nickname : "Nickname");
                 }
             }
-
             @Override
             public void onFailure(Call<UserResponseDTO> call, Throwable t) {
                 Log.e("MyPage", "네트워크 오류: " + t.getMessage());
@@ -91,38 +93,60 @@ public class MyPageFragment extends Fragment {
         });
     }
 
-    // --- 버튼 클릭 이벤트 ---
+    // ★ 추가된 메서드: 가로 스크롤에 띄울 영화 데이터 가져오기
+    private void fetchLikedMovies() {
+        String token = tokenManager.getAccessToken();
+        if (token == null) return;
+
+        authService.getFavoriteMovies("Bearer " + token).enqueue(new Callback<List<MovieSummaryResponseDTO>>() {
+            @Override
+            public void onResponse(Call<List<MovieSummaryResponseDTO>> call, Response<List<MovieSummaryResponseDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    likedMovieList.clear();
+                    likedMovieList.addAll(response.body());
+                    movieAdapter.notifyDataSetChanged();
+                }
+            }
+            @Override
+            public void onFailure(Call<List<MovieSummaryResponseDTO>> call, Throwable t) {
+                Log.e("MyPage", "네트워크 에러: " + t.getMessage());
+            }
+        });
+    }
+
     private void setupButtons(View view) {
-
-        // 1. 내가 좋아하는 영화
-        LinearLayout btnFavorite = view.findViewById(R.id.btn_favorite_movies);
-        btnFavorite.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), FavoriteMoviesActivity.class);
-            startActivity(intent);
+        // X 버튼: 드로어 닫기
+        ImageView btnClose = view.findViewById(R.id.btn_close_mypage);
+        btnClose.setOnClickListener(v -> {
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).closeMyPageDrawer();
+            }
         });
 
-        // 2. 개인정보 수정
-        LinearLayout btnEditProfile = view.findViewById(R.id.btn_edit_profile);
+        // View All > 버튼: 기존 FavoriteMoviesActivity(전체 목록)로 이동
+        TextView btnViewAll = view.findViewById(R.id.btn_view_all_movies);
+        btnViewAll.setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), FavoriteMoviesActivity.class));
+        });
+
+        // Edit Personal Information 버튼
+        View btnEditProfile = view.findViewById(R.id.btn_edit_profile);
         btnEditProfile.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), ProfileEditActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(getActivity(), ProfileEditActivity.class));
         });
 
-        // 3. 탈퇴하기
-        LinearLayout btnDeleteAccount = view.findViewById(R.id.btn_delete_account);
-        btnDeleteAccount.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), DeleteAccountActivity.class);
-            startActivity(intent);
-        });
-
-        // 4. 로그아웃
-        LinearLayout btnLogout = view.findViewById(R.id.btn_logout);
+        // Log Out 버튼
+        View btnLogout = view.findViewById(R.id.btn_logout);
         btnLogout.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).logout();
-            } else {
-                ToastUtil.show(getContext(), "로그아웃을 수행할 수 없습니다.");
             }
+        });
+
+        // Delete Account 버튼
+        View btnDeleteAccount = view.findViewById(R.id.btn_delete_account);
+        btnDeleteAccount.setOnClickListener(v -> {
+            startActivity(new Intent(getActivity(), DeleteAccountActivity.class));
         });
     }
 }
