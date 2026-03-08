@@ -35,8 +35,6 @@ public class MyPageFragment extends Fragment {
     private TextView tvUserName;
     private TokenManager tokenManager;
     private AuthService authService;
-
-    // 가로 스크롤 관련 변수
     private RecyclerView rvLikedMovies;
     private HorizontalMovieAdapter movieAdapter;
     private List<MovieSummaryResponseDTO> likedMovieList = new ArrayList<>();
@@ -58,7 +56,6 @@ public class MyPageFragment extends Fragment {
 
         // 1. 가로 스크롤 리사이클러뷰 설정
         rvLikedMovies = view.findViewById(R.id.rv_liked_movies_horizontal);
-        // XML에서 지정했지만 확실히 하기 위해 자바에서도 설정
         rvLikedMovies.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         movieAdapter = new HorizontalMovieAdapter(getContext(), likedMovieList);
         rvLikedMovies.setAdapter(movieAdapter);
@@ -71,7 +68,7 @@ public class MyPageFragment extends Fragment {
     public void onResume() {
         super.onResume();
         fetchUserInfo();
-        fetchLikedMovies(); // 좋아요한 영화 목록 불러오기 추가
+        fetchLikedMovies();
     }
 
     private void fetchUserInfo() {
@@ -93,7 +90,7 @@ public class MyPageFragment extends Fragment {
         });
     }
 
-    // ★ 추가된 메서드: 가로 스크롤에 띄울 영화 데이터 가져오기
+    // 가로 스크롤에 띄울 영화 데이터 가져오기
     private void fetchLikedMovies() {
         String token = tokenManager.getAccessToken();
         if (token == null) return;
