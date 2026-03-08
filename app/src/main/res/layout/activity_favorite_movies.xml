@@ -20,7 +20,7 @@
         android:id="@+id/tv_header_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="내가 좋아하는 영화"
+        android:text="Liked Movies"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:textStyle="bold"

@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -67,7 +66,9 @@ public class RecommendFragment extends Fragment {
 
         btnMenu = view.findViewById(R.id.btn_menu);
         btnMenu.setOnClickListener(v -> {
-            Toast.makeText(getContext(), "메뉴 클릭됨 (추후 프로필 창 연동)", Toast.LENGTH_SHORT).show();
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).openMyPageDrawer();
+            }
         });
 
         adapter = new MovieClickAdapter(getContext(), new MovieClickAdapter.OnItemClickListener() {
