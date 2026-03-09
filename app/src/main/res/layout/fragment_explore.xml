@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:layout_marginStart="20dp"
-            android:text="탐색"
+            android:text="Exploration"
             android:textColor="#FFFFFF"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:layout_marginStart="20dp"
-            android:text="선택한 리듬에 맞춰 영화를 추천해드릴게요"
+            android:text="Movies matched to your rhythm"
             android:textColor="#FFFFFF"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="parent"
@@ -80,7 +80,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="리듬 조절"
+                    android:text="Adjust Your Rhythm"
                     android:textColor="#111111"
                     android:textSize="18sp"
                     android:textStyle="bold"
@@ -89,7 +89,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="감정"
+                    android:text="Emotional"
                     android:textColor="#424242"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -116,7 +116,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="지성"
+                    android:text="Intellectual"
                     android:textColor="#424242"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -143,7 +143,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="신체"
+                    android:text="Physical"
                     android:textColor="#424242"
                     android:textSize="14sp"
                     android:textStyle="bold"/>
@@ -172,7 +172,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:background="@drawable/bg_button_dark_rounded"
-                    android:text="설정 완료"
+                    android:text="Done"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -187,7 +187,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginStart="20dp"
-            android:text="맞춤 추천 영화"
+            android:text="Personalized Picks"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -202,7 +202,7 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/bg_rounded_navy"
             android:padding="16dp"
-            android:text="감정을 낮추고 지성을 높이면 차분하고 몰입감 있는 영화가 추천돼요"
+            android:text="Lower emotion and raise intellect for calm, immersive movies."
             android:textColor="#374151"
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@+id/tv_recommend_title" />

@@ -34,7 +34,7 @@
             android:layout_height="48dp"
             android:layout_marginStart="12dp"
             android:background="@drawable/bg_search_input"
-            android:hint="영화 제목을 검색하세요"
+            android:hint="Search for a movie"
             android:textColor="#000000"
             android:textColorHint="#999999"
             android:textSize="14sp"
@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="영화를 검색해보세요"
+            android:text="Search for a movie"
             android:textColor="#666666"
             android:textSize="16sp"/>
     </LinearLayout>
