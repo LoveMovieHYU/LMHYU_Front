@@ -43,7 +43,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:text="Nickname"
+            android:text="닉네임"
             android:textColor="#FFFFFF"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -58,7 +58,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Liked Movies"
+            android:text="내가 좋아요한 영화"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
 
@@ -67,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:text="View All >"
+            android:text="모두 보기 >"
             android:textColor="#AAAAAA"
             android:textSize="14sp" />
     </RelativeLayout>
@@ -84,7 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Privacy Settings"
+        android:text="개인정보 설정"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:layout_marginBottom="12dp"/>
@@ -111,13 +111,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit Personal Information"
+                android:text="개인정보 수정"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Edit Nickname, Date of Birth"
+                android:text="닉네임 변경, 생년월일 변경"
                 android:textColor="#888888"
                 android:textSize="12sp" />
         </LinearLayout>
@@ -132,7 +132,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="Account Settings"
+        android:text="계정 설정"
         android:textColor="#FFFFFF"
         android:textSize="14sp"
         android:layout_marginBottom="12dp"/>
@@ -164,13 +164,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Log Out"
+                    android:text="로그 아웃"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Log Out of This Account"
+                    android:text="현재 계정 로그아웃"
                     android:textColor="#888888"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -204,13 +204,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Delete Account"
+                    android:text="계정 탈퇴"
                     android:textColor="#FF3B30"
                     android:textSize="16sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All data will be deleted."
+                    android:text="계정 정보 전체 삭제"
                     android:textColor="#888888"
                     android:textSize="12sp" />
             </LinearLayout>
