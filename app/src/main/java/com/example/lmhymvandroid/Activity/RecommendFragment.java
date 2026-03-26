@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,8 @@ public class RecommendFragment extends Fragment {
     private MovieService movieService;
     private ImageView btnMenu;
 
+    private ProgressBar pbMovieLoading;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -63,6 +66,8 @@ public class RecommendFragment extends Fragment {
 
         rvMovieList = view.findViewById(R.id.rv_movie_list);
         rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        pbMovieLoading = view.findViewById(R.id.pb_movie_loading);
 
         btnMenu = view.findViewById(R.id.btn_menu);
         btnMenu.setOnClickListener(v -> {
@@ -118,9 +123,17 @@ public class RecommendFragment extends Fragment {
     }
 
     private void loadRecommendedMovies() {
+
+        pbMovieLoading.setVisibility(View.VISIBLE);
+        rvMovieList.setVisibility(View.GONE);
+
         movieService.getRecommendedMovies().enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+
+                pbMovieLoading.setVisibility(View.GONE);
+                rvMovieList.setVisibility(View.VISIBLE);
+
                 if (response.isSuccessful() && response.body() != null) {
                     List<MovieItem> movies = response.body();
 
@@ -141,6 +154,7 @@ public class RecommendFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                pbMovieLoading.setVisibility(View.GONE);
                 Log.e("API_FAIL", t.getMessage());
             }
         });

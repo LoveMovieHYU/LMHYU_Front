@@ -11,6 +11,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +44,8 @@ public class SearchFragment extends Fragment {
     private SearchMovieGridAdapter adapter;
     private MovieService movieService;
 
+    private ProgressBar pbSearchLoading;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class SearchFragment extends Fragment {
         btnBack = view.findViewById(R.id.btn_back);
         layoutEmptyState = view.findViewById(R.id.layout_empty_state);
         rvSearchResult = view.findViewById(R.id.rv_search_result);
+        pbSearchLoading = view.findViewById(R.id.pb_search_loading);
 
         if (getContext() != null) {
             movieService = RetrofitClient.getClient(getContext()).create(MovieService.class);
@@ -105,9 +109,16 @@ public class SearchFragment extends Fragment {
 
         hideKeyboard();
 
+        pbSearchLoading.setVisibility(View.VISIBLE);
+        rvSearchResult.setVisibility(View.GONE);
+        layoutEmptyState.setVisibility(View.GONE);
+
         movieService.searchMovies(keyword, 1).enqueue(new Callback<List<MovieSearchResponse>>() {
             @Override
             public void onResponse(Call<List<MovieSearchResponse>> call, Response<List<MovieSearchResponse>> response) {
+
+                pbSearchLoading.setVisibility(View.GONE);
+
                 if (response.isSuccessful() && response.body() != null) {
                     List<MovieSearchResponse> resultList = response.body();
 
@@ -115,7 +126,7 @@ public class SearchFragment extends Fragment {
                         List<MovieItem> movieItems = convertToMovieItems(resultList);
                         adapter.setMovieList(movieItems);
                         rvSearchResult.setVisibility(View.VISIBLE);
-                        layoutEmptyState.setVisibility(View.GONE);
+                        // layoutEmptyState.setVisibility(View.GONE);
                     } else {
                         showEmptyState();
                         ToastUtil.show(getContext(), "검색 결과가 없습니다.");
@@ -132,6 +143,9 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<MovieSearchResponse>> call, Throwable t) {
+
+                pbSearchLoading.setVisibility(View.GONE);
+
                 showEmptyState();
                 t.printStackTrace();
 

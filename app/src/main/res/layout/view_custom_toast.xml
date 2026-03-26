@@ -12,7 +12,7 @@
         android:id="@+id/toast_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/ic_main_rounded"
+        android:src="@mipmap/app_icon"
         android:layout_marginEnd="12dp"
         xmlns:app="http://schemas.android.com/apk/res-auto"/>
     <TextView

@@ -11,7 +11,7 @@
         android:id="@+id/tv_page_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="For You Today"
+        android:text="오늘의 추천 영화"
         android:textColor="#FFFFFF"
         android:textSize="24sp"
         android:textStyle="bold"
@@ -55,11 +55,22 @@
         app:layout_constraintBottom_toTopOf="@+id/tv_bio_header"
         tools:listitem="@layout/item_movie_recommend" />
 
+    <ProgressBar
+        android:id="@+id/pb_movie_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:indeterminateTint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/divider_top"
+        app:layout_constraintBottom_toTopOf="@+id/tv_bio_header"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
         android:id="@+id/tv_bio_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Today's Biorhythm"
+        android:text="오늘의 바이오리듬"
         android:textColor="#FFFFFF"
         android:textSize="18sp"
         android:layout_marginBottom="12dp"
@@ -111,7 +122,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Physical"
+                        android:text="신체"
                         android:textColor="#FF8A8A"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -137,7 +148,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Emotional"
+                        android:text="감정"
                         android:textColor="#8AA4FF"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -163,7 +174,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Intellectual"
+                        android:text="지성"
                         android:textColor="#6FCF97"
                         android:textSize="13sp" />
                 </LinearLayout>

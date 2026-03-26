@@ -8,10 +8,10 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/ic_main"
-        android:label="biorythm"
+        android:icon="@mipmap/app_icon"
+        android:label="moov"
         android:networkSecurityConfig="@xml/network_security_config"
-        android:roundIcon="@drawable/ic_main_rounded"
+        android:roundIcon="@mipmap/app_icon"
         android:supportsRtl="true"
         android:theme="@style/Theme.App.Starting"
         android:usesCleartextTraffic="true">

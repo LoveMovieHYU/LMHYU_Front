@@ -4,11 +4,11 @@
     <item
         android:id="@+id/nav_recommend"
         android:icon="@drawable/ic_recommend"
-        android:title="Home" />
+        android:title="추천" />
 
     <item
         android:id="@+id/nav_explore"
         android:icon="@drawable/ic_explore"
-        android:title="Explore" />
+        android:title="탐색" />
 
 </menu>

@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -42,6 +44,8 @@ public class ExploreFragment extends Fragment {
     // 어댑터 및 통신 서비스
     private MovieClickAdapter adapter;
     private MovieService movieService;
+    private TextView tvDescBox;
+    private ProgressBar pbExploreLoading;
 
     @Nullable
     @Override
@@ -74,6 +78,9 @@ public class ExploreFragment extends Fragment {
         // 버튼 연결
         btnSettingComplete = view.findViewById(R.id.btn_setting_complete);
         btnSearchIcon = view.findViewById(R.id.btn_search_icon);
+
+        tvDescBox = view.findViewById(R.id.tv_desc_box);
+        pbExploreLoading = view.findViewById(R.id.pb_explore_loading);
 
         // 리사이클러뷰 설정
         rvExploreMovieList = view.findViewById(R.id.rv_explore_movie_list);
@@ -119,9 +126,16 @@ public class ExploreFragment extends Fragment {
     // API 호출 함수
     private void loadCustomMovies(float p, float e, float i) {
 
+        pbExploreLoading.setVisibility(View.VISIBLE);
+        rvExploreMovieList.setVisibility(View.GONE);
+        tvDescBox.setVisibility(View.GONE);
+
         movieService.getCustomRecommendations(p, e, i).enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+
+                pbExploreLoading.setVisibility(View.GONE);
+
                 if (response.isSuccessful() && response.body() != null) {
                     List<MovieItem> movies = response.body();
 
@@ -134,8 +148,11 @@ public class ExploreFragment extends Fragment {
                         });
 
                         adapter.setMovieList(movies);
+                        rvExploreMovieList.setVisibility(View.VISIBLE);
                     } else {
                         ToastUtil.show(getContext(), "해당 조건의 추천 영화가 없습니다.");
+                        tvDescBox.setText("해당 조건의 영화가 없습니다. 슬라이더를 다시 조절해 보세요.");
+                        tvDescBox.setVisibility(View.VISIBLE);
                     }
                 } else {
                     Log.e("API_ERROR", "탐색 실패: " + response.code());
@@ -145,6 +162,10 @@ public class ExploreFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+
+                pbExploreLoading.setVisibility(View.GONE);
+                tvDescBox.setVisibility(View.VISIBLE);
+
                 Log.e("API_FAIL", "통신/파싱 실패 원인: " + t.getMessage());
                 t.printStackTrace();
 
