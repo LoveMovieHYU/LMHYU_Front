@@ -48,8 +48,6 @@ public class CreateNicknameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_nickname);
-
-        // ◀◀ AuthService 초기화
         authService = RetrofitClient.getClient(this).create(AuthService.class);
 
         initViews();
