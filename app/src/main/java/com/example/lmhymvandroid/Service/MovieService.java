@@ -6,7 +6,7 @@ import com.example.lmhymvandroid.DTO.LikeRequest;
 import com.example.lmhymvandroid.DTO.MovieDetailResponse;
 import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.MovieSearchResponse;
-import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
+import com.example.lmhymvandroid.DTO.NicknameRequest;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ public interface MovieService {
     Call<BiorhythmResponse> getBiorhythmAnalyze();
 
     @POST("/api/recommend/first/list")
-    Call<List<MovieItem>> postFirstRecommend(@Body NicknameUpdateRequest request);
+    Call<List<MovieItem>> postFirstRecommend(@Body NicknameRequest request);
 
     @GET("/api/recommend/list")
     Call<List<MovieItem>> getRecommendedMovies();
