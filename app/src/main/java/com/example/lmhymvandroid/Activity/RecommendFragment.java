@@ -23,6 +23,7 @@ import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.MovieService;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -143,8 +144,10 @@ public class RecommendFragment extends Fragment {
                             return Double.compare(m2.getRating(), m1.getRating());
                         }
                     });
+                    int limit = Math.min(movies.size(), 15);
+                    List<MovieItem> topMovies = new ArrayList<>(movies.subList(0, limit));
 
-                    adapter.setMovieList(movies);
+                    adapter.setMovieList(topMovies);
 
                 } else {
                     Log.e("API_ERROR", "영화 리스트 로드 실패: " + response.code());
