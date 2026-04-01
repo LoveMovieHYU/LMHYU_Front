@@ -2,6 +2,7 @@ package com.example.lmhymvandroid.Service;
 
 import com.example.lmhymvandroid.DTO.LoginResponseDTO;
 import com.example.lmhymvandroid.DTO.MovieSummaryResponseDTO;
+import com.example.lmhymvandroid.DTO.NicknameRequest;
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 import com.example.lmhymvandroid.DTO.ProfileCheckResponseDTO;
 import com.example.lmhymvandroid.DTO.UserResponseDTO;
@@ -13,11 +14,14 @@ import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
-import retrofit2.http.PUT;
 
 public interface AuthService {
-    @PUT("/api/user/update")
+    @POST("/api/user/update")
+    Call<Void> updateUserInfo(@Body NicknameRequest request);
+
+    @PATCH("/api/user/update")
     Call<Void> updateUserInfo(@Body NicknameUpdateRequest request);
 
     @GET("/api/user/check-profile")

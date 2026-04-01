@@ -10,13 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.example.lmhymvandroid.DTO.MovieItem;
-import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
+import com.example.lmhymvandroid.DTO.NicknameRequest;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
 import com.example.lmhymvandroid.Service.AuthService;
@@ -41,6 +42,8 @@ public class CreateNicknameActivity extends AppCompatActivity {
     private TextView textViewBirthdate;
     private CardView calendarCardView;
     private MaterialCalendarView calendarView;
+    private RadioGroup radioGroupGender;
+
     private String selectedDate = "";
     private MovieService movieService;
 
@@ -61,36 +64,37 @@ public class CreateNicknameActivity extends AppCompatActivity {
         textViewBirthdate = findViewById(R.id.textViewBirthdate);
         calendarCardView = findViewById(R.id.calendarCardView);
         calendarView = findViewById(R.id.calendarView);
+        radioGroupGender = findViewById(R.id.radioGroupGender);
 
-        // 달력 아이콘 클릭 시 토글
         findViewById(R.id.buttonCalendar).setOnClickListener(v -> {
             calendarCardView.setVisibility(calendarCardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         });
 
-        // 시작하기 버튼 클릭
+
         findViewById(R.id.buttonSubmit).setOnClickListener(v -> {
             String nickname = nicknameEditText.getText().toString().trim();
-            if (validateInput(nickname)) {
-                requestUpdateUserInfo(nickname, selectedDate);
+            String selectedGender = "";
+            int checkedId = radioGroupGender.getCheckedRadioButtonId();
+            if (checkedId == R.id.radioMale) {
+                selectedGender = "M";
+            } else if (checkedId == R.id.radioFemale) {
+                selectedGender = "W";
+            }
+            if (validateInput(nickname, selectedGender)) {
+                requestUpdateUserInfo(nickname, selectedDate, selectedGender);
             }
         });
     }
 
     private void setupCalendarLogic() {
-        // 1. 타이틀 포맷 설정
         calendarView.setTitleFormatter(day ->
                 String.format(Locale.KOREA, "%d년 %02d월", day.getYear(), day.getMonth() + 1));
-
-        // 2. 타이틀 클릭 시 연도 점프 다이얼로그 표시
         calendarView.setOnTitleClickListener(view -> showYearMonthPicker());
-
-        // 3. 날짜 선택 시 텍스트 업데이트 및 달력 닫기
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             updateDateDisplay(date.getYear(), date.getMonth(), date.getDay());
             calendarCardView.setVisibility(View.GONE);
         });
 
-        // '오늘', '삭제' 버튼 로직
         findViewById(R.id.btnCalendarToday).setOnClickListener(v -> {
             Calendar today = Calendar.getInstance();
             updateDateDisplay(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
@@ -107,28 +111,22 @@ public class CreateNicknameActivity extends AppCompatActivity {
     private void showYearMonthPicker() {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_year_picker);
-
-        if (dialog.getWindow() != null) {
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        }
+        if (dialog.getWindow() != null) dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
         NumberPicker yearPicker = dialog.findViewById(R.id.picker_year);
         NumberPicker monthPicker = dialog.findViewById(R.id.picker_month);
         Button btnConfirm = dialog.findViewById(R.id.btn_confirm);
 
-        // 연도 범위 설정 (1950 ~ 2026)
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         yearPicker.setMinValue(1950);
         yearPicker.setMaxValue(currentYear);
         yearPicker.setValue(calendarView.getCurrentDate().getYear());
 
-        // 월 범위 설정 (1 ~ 12)
         monthPicker.setMinValue(1);
         monthPicker.setMaxValue(12);
         monthPicker.setValue(calendarView.getCurrentDate().getMonth() + 1);
 
         btnConfirm.setOnClickListener(v -> {
-            // 선택한 연도/월로 달력 이동
             calendarView.setCurrentDate(CalendarDay.from(yearPicker.getValue(), monthPicker.getValue() - 1, 1));
             dialog.dismiss();
         });
@@ -141,24 +139,31 @@ public class CreateNicknameActivity extends AppCompatActivity {
         textViewBirthdate.setTextColor(Color.BLACK);
     }
 
-    private boolean validateInput(String nick) {
-        if (nick.isEmpty() || selectedDate.isEmpty()) {
-            ToastUtil.show(this, "닉네임과 생일을 모두 입력해주세요.");
+    private boolean validateInput(String nick, String gender) {
+        if (nick.isEmpty()) {
+            ToastUtil.show(this, "닉네임을 입력해주세요.");
+            return false;
+        }
+        if (gender.isEmpty()) {
+            ToastUtil.show(this, "성별을 선택해주세요.");
+            return false;
+        }
+        if (selectedDate.isEmpty()) {
+            ToastUtil.show(this, "생년월일을 입력해주세요.");
             return false;
         }
         return true;
     }
 
-    private void requestUpdateUserInfo(String nickname, String birthdate) {
-        Log.d("LMHYU_LOG", "API 요청 시작: " + nickname + ", " + birthdate);
-        NicknameUpdateRequest request = new NicknameUpdateRequest(nickname, birthdate);
+    private void requestUpdateUserInfo(String nickname, String birthdate, String gender) {
+        Log.d("LMHYU_LOG", "API 요청 시작: " + nickname + ", " + birthdate + ", " + gender);
+        NicknameRequest request = new NicknameRequest(nickname, birthdate, gender);
 
         movieService.postFirstRecommend(request).enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
                 if (response.isSuccessful()) {
                     ToastUtil.show(CreateNicknameActivity.this, "환영합니다! 추천을 시작합니다.");
-
                     Intent intent = new Intent(CreateNicknameActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);

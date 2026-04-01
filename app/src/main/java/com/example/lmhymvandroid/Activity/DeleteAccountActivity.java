@@ -114,7 +114,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                Log.e("DeleteAccount", "Network Error: " + t.getMessage());
+                Log.e("DeleteAccount",  "Network Error: " + t.getMessage());
                 ToastUtil.show(DeleteAccountActivity.this, "네트워크 오류가 발생했습니다.");
             }
         });

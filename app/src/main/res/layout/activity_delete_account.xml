@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         app:cardCornerRadius="12dp"
-        app:cardBackgroundColor="#F5F5F5"
+        app:cardBackgroundColor="#141925"
         app:layout_constraintTop_toBottomOf="@id/tv_subtitle">
 
         <RadioGroup
@@ -133,7 +133,7 @@
         android:id="@+id/btn_next"
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:text="Continue"
+        android:text="계속하기"
         android:textColor="#FFFFFF"
         android:background="@drawable/bg_rounded_gray"
         android:visibility="gone"
