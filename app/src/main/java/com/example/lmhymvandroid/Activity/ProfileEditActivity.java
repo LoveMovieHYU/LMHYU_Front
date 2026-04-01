@@ -156,14 +156,9 @@ public class ProfileEditActivity extends AppCompatActivity {
             public void onResponse(Call<UserResponseDTO> call, Response<UserResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     UserResponseDTO user = response.body();
-
-                    Log.d("HYMV_DEBUG", "=== ProfileEdit 서버 로드 데이터 ===");
-                    Log.d("HYMV_DEBUG", "서버 닉네임: " + user.getNickname());
-                    Log.d("HYMV_DEBUG", "서버 생일: " + user.getBirthday());
-
                     if (user.getNickname() != null) etNickname.setText(user.getNickname());
 
-                    String existingBirthday = user.getBirthday();
+                    String existingBirthday = user.getBirthdate();
                     if (existingBirthday != null && !existingBirthday.isEmpty()) {
                         selectedDate = existingBirthday;
                         tvBirthdate.setText(selectedDate);
