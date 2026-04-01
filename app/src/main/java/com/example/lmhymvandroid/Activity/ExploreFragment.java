@@ -25,6 +25,7 @@ import com.example.lmhymvandroid.Service.MovieService;
 import com.example.lmhymvandroid.ToastUtil;
 import com.google.android.material.slider.Slider;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -146,8 +147,10 @@ public class ExploreFragment extends Fragment {
                                 return Double.compare(m2.getRating(), m1.getRating());
                             }
                         });
+                        int limit = Math.min(movies.size(), 15);
+                        List<MovieItem> topMovies = new ArrayList<>(movies.subList(0, limit));
 
-                        adapter.setMovieList(movies);
+                        adapter.setMovieList(topMovies);
                         rvExploreMovieList.setVisibility(View.VISIBLE);
                     } else {
                         ToastUtil.show(getContext(), "해당 조건의 추천 영화가 없습니다.");
