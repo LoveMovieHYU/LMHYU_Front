@@ -102,19 +102,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             calendarCardView.setVisibility(View.GONE);
         });
 
-        findViewById(R.id.btnCalendarToday).setOnClickListener(v -> {
-            Calendar today = Calendar.getInstance();
-            updateDateDisplay(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
-            calendarCardView.setVisibility(View.GONE);
-        });
-
-        findViewById(R.id.btnCalendarDelete).setOnClickListener(v -> {
-            selectedDate = "";
-            tvBirthdate.setText("");
-            tvBirthdate.setHint("YYYY-MM-DD");
-            calendarView.clearSelection();
-            calendarCardView.setVisibility(View.GONE);
-        });
     }
 
     private void showYearMonthPicker() {

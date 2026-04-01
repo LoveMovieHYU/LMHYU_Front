@@ -95,17 +95,6 @@ public class CreateNicknameActivity extends AppCompatActivity {
             calendarCardView.setVisibility(View.GONE);
         });
 
-        findViewById(R.id.btnCalendarToday).setOnClickListener(v -> {
-            Calendar today = Calendar.getInstance();
-            updateDateDisplay(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
-        });
-
-        findViewById(R.id.btnCalendarDelete).setOnClickListener(v -> {
-            selectedDate = "";
-            textViewBirthdate.setText("YYYY-MM-DD");
-            textViewBirthdate.setTextColor(Color.parseColor("#BBBBBB"));
-            calendarCardView.setVisibility(View.GONE);
-        });
     }
 
     private void showYearMonthPicker() {

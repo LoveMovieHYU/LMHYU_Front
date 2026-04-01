@@ -161,24 +161,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/btnCalendarDelete"
-                        style="?android:attr/borderlessButtonStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:text="Delete"
-                        android:textColor="#666666" />
-
-                    <Button
-                        android:id="@+id/btnCalendarToday"
-                        style="?android:attr/borderlessButtonStyle"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:text="Today"
-                        android:textColor="#4A4A8A" />
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
