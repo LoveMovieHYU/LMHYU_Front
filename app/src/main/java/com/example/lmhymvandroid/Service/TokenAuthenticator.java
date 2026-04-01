@@ -1,9 +1,11 @@
 package com.example.lmhymvandroid.Service;
 
 import android.content.Context;
+import android.content.Intent;
 
 import androidx.annotation.Nullable;
 
+import com.example.lmhymvandroid.Activity.LoginActivity;
 import com.example.lmhymvandroid.DTO.LoginResponseDTO;
 import com.example.lmhymvandroid.TokenManager;
 
@@ -17,10 +19,12 @@ import retrofit2.Call;
 
 public class TokenAuthenticator implements Authenticator {
 
-    private TokenManager tokenManager;
-    private AuthService authService; // 토큰 갱신 API를 호출하기 위해 필요
+    private final Context context;
+    private final TokenManager tokenManager;
+    private final AuthService authService;
 
     public TokenAuthenticator(Context context, AuthService authService) {
+        this.context = context;
         this.tokenManager = new TokenManager(context);
         this.authService = authService;
     }
@@ -48,9 +52,16 @@ public class TokenAuthenticator implements Authenticator {
             return response.request().newBuilder()
                     .header("Authorization", "Bearer " + newTokens.getAccessToken())
                     .build();
-        }
+        } else {
+            tokenManager.clearTokens();
 
-        return null;
+            //유저를 로그인 화면으로 쫓아냄 (기존 쌓인 화면 스택을 모두 날림)
+            Intent intent = new Intent(context, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            context.startActivity(intent);
+
+            return null;
+        }
     }
 
     private int responseCount(Response response) {
