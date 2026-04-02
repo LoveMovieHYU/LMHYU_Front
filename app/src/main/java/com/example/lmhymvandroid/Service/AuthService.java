@@ -19,7 +19,7 @@ import retrofit2.http.POST;
 
 public interface AuthService {
     @POST("/api/user/update")
-    Call<Void> updateUserInfo(@Body NicknameRequest request);
+    Call<Void> createInitialProfile(@Body NicknameRequest request);
 
     @PATCH("/api/user/update")
     Call<Void> updateUserInfo(@Body NicknameUpdateRequest request);

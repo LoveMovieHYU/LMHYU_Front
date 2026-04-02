@@ -16,19 +16,16 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.NicknameRequest;
 import com.example.lmhymvandroid.R;
 import com.example.lmhymvandroid.RetrofitClient;
-import com.example.lmhymvandroid.Service.AuthService;
-import com.example.lmhymvandroid.Service.MovieService;
+import com.example.lmhymvandroid.Service.AuthService; // ◀◀ AuthService 임포트
 import com.example.lmhymvandroid.ToastUtil;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import retrofit2.Call;
@@ -38,6 +35,7 @@ import retrofit2.Response;
 public class CreateNicknameActivity extends AppCompatActivity {
 
     private AuthService authService;
+
     private EditText nicknameEditText;
     private TextView textViewBirthdate;
     private CardView calendarCardView;
@@ -45,14 +43,13 @@ public class CreateNicknameActivity extends AppCompatActivity {
     private RadioGroup radioGroupGender;
 
     private String selectedDate = "";
-    private MovieService movieService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_nickname);
+        authService = RetrofitClient.getClient(this).create(AuthService.class);
 
-        movieService = RetrofitClient.getClient(this).create(MovieService.class);
         initViews();
         setupCalendarLogic();
         String missing = getIntent().getStringExtra("MISSING_FIELD");
@@ -69,7 +66,6 @@ public class CreateNicknameActivity extends AppCompatActivity {
         findViewById(R.id.buttonCalendar).setOnClickListener(v -> {
             calendarCardView.setVisibility(calendarCardView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
         });
-
 
         findViewById(R.id.buttonSubmit).setOnClickListener(v -> {
             String nickname = nicknameEditText.getText().toString().trim();
@@ -94,7 +90,6 @@ public class CreateNicknameActivity extends AppCompatActivity {
             updateDateDisplay(date.getYear(), date.getMonth(), date.getDay());
             calendarCardView.setVisibility(View.GONE);
         });
-
     }
 
     private void showYearMonthPicker() {
@@ -145,14 +140,16 @@ public class CreateNicknameActivity extends AppCompatActivity {
     }
 
     private void requestUpdateUserInfo(String nickname, String birthdate, String gender) {
-        Log.d("LMHYU_LOG", "API 요청 시작: " + nickname + ", " + birthdate + ", " + gender);
+        Log.d("LMHYU_LOG", "초기 프로필 설정 요청: " + nickname + ", " + birthdate + ", " + gender);
         NicknameRequest request = new NicknameRequest(nickname, birthdate, gender);
 
-        movieService.postFirstRecommend(request).enqueue(new Callback<List<MovieItem>>() {
+        authService.createInitialProfile(request).enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    ToastUtil.show(CreateNicknameActivity.this, "환영합니다! 추천을 시작합니다.");
+                    ToastUtil.show(CreateNicknameActivity.this, "프로필이 설정되었습니다! 환영합니다.");
+
+                    // 메인 화면으로 이동
                     Intent intent = new Intent(CreateNicknameActivity.this, MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -162,7 +159,7 @@ public class CreateNicknameActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+            public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("LMHYU_LOG", "네트워크 에러: " + t.getMessage());
                 ToastUtil.show(CreateNicknameActivity.this, "서버 연결 실패");
             }
