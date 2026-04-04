@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lmhymvandroid.Adapter.HorizontalMovieAdapter;
+import com.example.lmhymvandroid.DTO.MovieItem;
 import com.example.lmhymvandroid.DTO.MovieSummaryResponseDTO;
 import com.example.lmhymvandroid.DTO.UserResponseDTO;
 import com.example.lmhymvandroid.R;
@@ -53,15 +55,41 @@ public class MyPageFragment extends Fragment {
         authService = RetrofitClient.getClient(requireContext()).create(AuthService.class);
 
         tvUserName = view.findViewById(R.id.tv_user_name);
-
-        // 1. 가로 스크롤 리사이클러뷰 설정
         rvLikedMovies = view.findViewById(R.id.rv_liked_movies_horizontal);
         rvLikedMovies.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        movieAdapter = new HorizontalMovieAdapter(getContext(), likedMovieList);
+
+        movieAdapter = new HorizontalMovieAdapter(getContext(), likedMovieList, new HorizontalMovieAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(MovieSummaryResponseDTO movieSummary) {
+                int movieId = movieSummary.getId();
+                String title = movieSummary.getTitle();
+                String posterUrl = movieSummary.getPosterPath();
+
+                MovieItem tempMovieItem = new MovieItem(
+                        movieId,
+                        title,
+                        posterUrl,
+                        0.0,
+                        "-",
+                        new ArrayList<>()
+                );
+                Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+                intent.putExtra("movie_data", tempMovieItem);
+                startActivity(intent);
+            }
+        });
         rvLikedMovies.setAdapter(movieAdapter);
 
-        // 2. 버튼 리스너 연결
         setupButtons(view);
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).closeMyPageDrawer();
+                }
+            }
+        });
     }
 
     @Override
@@ -90,7 +118,6 @@ public class MyPageFragment extends Fragment {
         });
     }
 
-    // 가로 스크롤에 띄울 영화 데이터 가져오기
     private void fetchLikedMovies() {
         String token = tokenManager.getAccessToken();
         if (token == null) return;
@@ -112,7 +139,6 @@ public class MyPageFragment extends Fragment {
     }
 
     private void setupButtons(View view) {
-        // X 버튼: 드로어 닫기
         ImageView btnClose = view.findViewById(R.id.btn_close_mypage);
         btnClose.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
@@ -120,19 +146,16 @@ public class MyPageFragment extends Fragment {
             }
         });
 
-        // View All > 버튼: 기존 FavoriteMoviesActivity(전체 목록)로 이동
         TextView btnViewAll = view.findViewById(R.id.btn_view_all_movies);
         btnViewAll.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), FavoriteMoviesActivity.class));
         });
 
-        // Edit Personal Information 버튼
         View btnEditProfile = view.findViewById(R.id.btn_edit_profile);
         btnEditProfile.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), ProfileEditActivity.class));
         });
 
-        // Log Out 버튼
         View btnLogout = view.findViewById(R.id.btn_logout);
         btnLogout.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
@@ -140,7 +163,6 @@ public class MyPageFragment extends Fragment {
             }
         });
 
-        // Delete Account 버튼
         View btnDeleteAccount = view.findViewById(R.id.btn_delete_account);
         btnDeleteAccount.setOnClickListener(v -> {
             startActivity(new Intent(getActivity(), DeleteAccountActivity.class));
