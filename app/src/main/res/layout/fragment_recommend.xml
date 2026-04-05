@@ -49,12 +49,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:layout_marginHorizontal="20dp"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintTop_toBottomOf="@+id/divider_top"
-        app:layout_constraintBottom_toTopOf="@+id/tv_bio_header"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
         tools:listitem="@layout/item_movie_recommend" />
 
     <ProgressBar
@@ -64,137 +64,181 @@
         android:visibility="visible"
         android:indeterminateTint="#FFFFFF"
         app:layout_constraintTop_toBottomOf="@+id/divider_top"
-        app:layout_constraintBottom_toTopOf="@+id/tv_bio_header"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_bio_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="오늘의 바이오리듬"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintStart_toStartOf="@+id/card_biorhythm"
-        app:layout_constraintBottom_toTopOf="@+id/card_biorhythm"/>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_biorhythm"
+    <LinearLayout
+        android:id="@+id/bottom_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginBottom="30dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="0dp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/layout_bio_header"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="24dp">
-
-            <LinearLayout
-                android:id="@+id/layout_indices"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_physical_index"
-                        android:layout_width="70dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_rounded_gray_light"
-                        android:gravity="center"
-                        android:text="--"
-                        android:textColor="#000000"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="신체"
-                        android:textColor="#FF8A8A"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_emotional_index"
-                        android:layout_width="70dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_rounded_gray_light"
-                        android:gravity="center"
-                        android:text="--"
-                        android:textColor="#000000"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="감정"
-                        android:textColor="#8AA4FF"
-                        android:textSize="13sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_intellectual_index"
-                        android:layout_width="70dp"
-                        android:layout_height="80dp"
-                        android:background="@drawable/bg_rounded_gray_light"
-                        android:gravity="center"
-                        android:text="--"
-                        android:textColor="#000000"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="지성"
-                        android:textColor="#6FCF97"
-                        android:textSize="13sp" />
-                </LinearLayout>
-            </LinearLayout>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="16dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:paddingEnd="20dp"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true">
 
             <TextView
-                android:id="@+id/tv_status_message"
-                android:layout_width="0dp"
+                android:id="@+id/tv_bio_header"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="데이터를 불러오는 중입니다..."
-                android:textColor="#4A5568"
-                android:textSize="14sp"
-                android:lineSpacingExtra="4dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/layout_indices" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.cardview.widget.CardView>
+                android:text="오늘의 바이오리듬"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_bio_toggle_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="숨기기"
+                android:textColor="#AAAAAA"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_biorhythm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="30dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                android:visibility="visible">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="24dp">
+
+                    <LinearLayout
+                        android:id="@+id/layout_indices"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="3"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_physical_index"
+                                android:layout_width="70dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/bg_rounded_gray_light"
+                                android:gravity="center"
+                                android:text="--"
+                                android:textColor="#000000"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="신체"
+                                android:textColor="#FF8A8A"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_emotional_index"
+                                android:layout_width="70dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/bg_rounded_gray_light"
+                                android:gravity="center"
+                                android:text="--"
+                                android:textColor="#000000"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="감정"
+                                android:textColor="#8AA4FF"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_intellectual_index"
+                                android:layout_width="70dp"
+                                android:layout_height="80dp"
+                                android:background="@drawable/bg_rounded_gray_light"
+                                android:gravity="center"
+                                android:text="--"
+                                android:textColor="#000000"
+                                android:textSize="24sp"
+                                android:textStyle="bold" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="지성"
+                                android:textColor="#6FCF97"
+                                android:textSize="13sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_status_message"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center"
+                        android:text="데이터를 불러오는 중입니다..."
+                        android:textColor="#4A5568"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/layout_indices" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_biorhythm_collapsed"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginBottom="30dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="2dp"
+                android:visibility="gone">
+            </androidx.cardview.widget.CardView>
+        </FrameLayout>
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

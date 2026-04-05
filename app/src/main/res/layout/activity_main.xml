@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:backgroundTint="#121212"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:itemTextColor="@color/nav_item_text_color" app:layout_constraintBottom_toBottomOf="parent"
             app:menu="@menu/bottom_nav_menu"
             tools:layout_editor_absoluteX="0dp" />
 
