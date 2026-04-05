@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +43,11 @@ public class RecommendFragment extends Fragment {
     private ImageView btnMenu;
 
     private ProgressBar pbMovieLoading;
+    private LinearLayout layoutBioHeader;
+    private TextView tvBioToggleText;
+    private CardView cardBiorhythm;
+    private CardView cardBiorhythmCollapsed;
+    private boolean isBioExpanded = true;
 
     @Nullable
     @Override
@@ -69,8 +76,14 @@ public class RecommendFragment extends Fragment {
         rvMovieList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         pbMovieLoading = view.findViewById(R.id.pb_movie_loading);
-
         btnMenu = view.findViewById(R.id.btn_menu);
+
+        layoutBioHeader = view.findViewById(R.id.layout_bio_header);
+        tvBioToggleText = view.findViewById(R.id.tv_bio_toggle_text);
+        cardBiorhythm = view.findViewById(R.id.card_biorhythm);
+        cardBiorhythmCollapsed = view.findViewById(R.id.card_biorhythm_collapsed);
+        layoutBioHeader.setOnClickListener(v -> toggleBiorhythmPanel());
+
         btnMenu.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
                 ((MainActivity) getActivity()).openMyPageDrawer();
@@ -86,6 +99,22 @@ public class RecommendFragment extends Fragment {
             }
         });
         rvMovieList.setAdapter(adapter);
+    }
+
+    private void toggleBiorhythmPanel() {
+        isBioExpanded = !isBioExpanded;
+
+        if (isBioExpanded) {
+            // 펼쳐진 상태: 누르면 숨겨지도록 "숨기기" 표시
+            cardBiorhythm.setVisibility(View.VISIBLE);
+            cardBiorhythmCollapsed.setVisibility(View.GONE);
+            tvBioToggleText.setText("숨기기");
+        } else {
+            // 접힌 상태: 누르면 펼쳐지도록 "펼치기" 표시
+            cardBiorhythm.setVisibility(View.GONE);
+            cardBiorhythmCollapsed.setVisibility(View.VISIBLE);
+            tvBioToggleText.setText("펼치기");
+        }
     }
 
     private void initRetrofit() {
