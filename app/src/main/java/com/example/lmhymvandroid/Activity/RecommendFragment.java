@@ -105,12 +105,10 @@ public class RecommendFragment extends Fragment {
         isBioExpanded = !isBioExpanded;
 
         if (isBioExpanded) {
-            // 펼쳐진 상태: 누르면 숨겨지도록 "숨기기" 표시
             cardBiorhythm.setVisibility(View.VISIBLE);
             cardBiorhythmCollapsed.setVisibility(View.GONE);
             tvBioToggleText.setText("숨기기");
         } else {
-            // 접힌 상태: 누르면 펼쳐지도록 "펼치기" 표시
             cardBiorhythm.setVisibility(View.GONE);
             cardBiorhythmCollapsed.setVisibility(View.VISIBLE);
             tvBioToggleText.setText("펼치기");
