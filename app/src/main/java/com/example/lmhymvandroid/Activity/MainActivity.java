@@ -1,10 +1,15 @@
 package com.example.lmhymvandroid.Activity;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
@@ -48,6 +53,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         // 3. 로그인 상태 체크 및 분기 처리
         checkLoginAndSetup(savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // 서랍(드로어)이 열려있다면 서랍을 닫기
+                if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                    closeMyPageDrawer();
+                } else {
+                    // 서랍이 닫혀있다면 앱 종료 팝업 띄우기
+                    showExitDialog();
+                }
+            }
+        });
     }
 
     /**
@@ -124,6 +141,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             return true;
         }
         return false;
+    }
+
+    private void showExitDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_exit_app);
+
+        // 배경을 투명하게 만들어 카드뷰의 둥근 모서리가 보이게 설정
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            // 미리 만들어둔 위아래 슬라이드 애니메이션 적용
+            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        }
+
+        // '계속 사용' 버튼 (다이얼로그 닫기)
+        dialog.findViewById(R.id.btn_continue).setOnClickListener(v -> dialog.dismiss());
+
+        // '종료하기' 버튼 (앱 완전 종료)
+        dialog.findViewById(R.id.btn_exit).setOnClickListener(v -> {
+            dialog.dismiss();
+            finishAffinity(); // 모든 액티비티를 메모리에서 날리고 앱 종료
+        });
+
+        dialog.show();
     }
 
     /**
