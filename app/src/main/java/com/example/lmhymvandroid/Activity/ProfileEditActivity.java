@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -34,13 +36,13 @@ public class ProfileEditActivity extends AppCompatActivity {
 
     private AuthService authService;
     private TokenManager tokenManager;
-
     private EditText etNickname;
     private TextView tvBirthdate;
     private CardView calendarCardView;
     private MaterialCalendarView calendarView;
-
     private String selectedDate = "";
+    private String originalNickname = "";
+    private String originalBirthdate = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,19 @@ public class ProfileEditActivity extends AppCompatActivity {
         calendarView = findViewById(R.id.calendarView);
 
         setupCalendarLogic();
+
+        etNickname.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                etNickname.setTextColor(Color.parseColor("#000000"));
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         View.OnClickListener toggleCalendar = v -> {
             if (calendarCardView.getVisibility() == View.VISIBLE) {
@@ -76,7 +91,6 @@ public class ProfileEditActivity extends AppCompatActivity {
         findViewById(R.id.iv_calendar_icon).setOnClickListener(toggleCalendar);
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
-
         findViewById(R.id.btn_save).setOnClickListener(v -> {
             String nickname = etNickname.getText().toString().trim();
             String birthdate = tvBirthdate.getText().toString().trim();
@@ -84,8 +98,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             if (birthdate.equals("YYYY-MM-DD")) {
                 birthdate = "";
             }
-
-
             if (validateInputs(nickname, birthdate)) {
                 requestUpdateProfile(nickname, birthdate);
             }
@@ -101,7 +113,6 @@ public class ProfileEditActivity extends AppCompatActivity {
             updateDateDisplay(date.getYear(), date.getMonth(), date.getDay());
             calendarCardView.setVisibility(View.GONE);
         });
-
     }
 
     private void showYearMonthPicker() {
@@ -131,7 +142,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private void updateDateDisplay(int year, int month, int day) {
         selectedDate = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month + 1, day);
         tvBirthdate.setText(selectedDate);
-        tvBirthdate.setTextColor(Color.BLACK);
+        tvBirthdate.setTextColor(Color.parseColor("#000000"));
     }
 
     private void loadCurrentUserInfo() {
@@ -143,13 +154,19 @@ public class ProfileEditActivity extends AppCompatActivity {
             public void onResponse(Call<UserResponseDTO> call, Response<UserResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     UserResponseDTO user = response.body();
-                    if (user.getNickname() != null) etNickname.setText(user.getNickname());
+
+                    if (user.getNickname() != null) {
+                        originalNickname = user.getNickname();
+                        etNickname.setText(originalNickname);
+                        etNickname.setTextColor(Color.parseColor("#999999"));
+                    }
 
                     String existingBirthday = user.getBirthdate();
                     if (existingBirthday != null && !existingBirthday.isEmpty()) {
+                        originalBirthdate = existingBirthday;
                         selectedDate = existingBirthday;
                         tvBirthdate.setText(selectedDate);
-                        tvBirthdate.setTextColor(Color.BLACK);
+                        tvBirthdate.setTextColor(Color.parseColor("#999999"));
                     }
                 }
             }
@@ -162,8 +179,11 @@ public class ProfileEditActivity extends AppCompatActivity {
 
 
     private boolean validateInputs(String nickname, String birthdate) {
-        if (nickname.isEmpty() && birthdate.isEmpty()) {
-            ToastUtil.show(this, "수정할 정보를 입력하거나 선택해주세요.");
+        boolean isNicknameChanged = !nickname.equals(originalNickname) && !nickname.isEmpty();
+        boolean isBirthdateChanged = !birthdate.equals(originalBirthdate) && !birthdate.isEmpty();
+
+        if (!isNicknameChanged && !isBirthdateChanged) {
+            ToastUtil.show(this, "수정된 정보가 없습니다.");
             return false;
         }
         return true;
@@ -171,10 +191,9 @@ public class ProfileEditActivity extends AppCompatActivity {
 
 
     private void requestUpdateProfile(String nickname, String birthday) {
+        String patchNickname = nickname.equals(originalNickname) || nickname.isEmpty() ? null : nickname;
+        String patchBirthday = birthday.equals(originalBirthdate) || birthday.isEmpty() ? null : birthday;
 
-
-        String patchNickname = nickname.isEmpty() ? null : nickname;
-        String patchBirthday = birthday.isEmpty() ? null : birthday;
         NicknameUpdateRequest request = new NicknameUpdateRequest(patchNickname, patchBirthday);
 
         authService.updateUserInfo(request).enqueue(new Callback<Void>() {

@@ -1,10 +1,15 @@
 package com.example.lmhymvandroid.Activity;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.splashscreen.SplashScreen;
@@ -48,6 +53,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         // 3. 로그인 상태 체크 및 분기 처리
         checkLoginAndSetup(savedInstanceState);
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
+                    closeMyPageDrawer();
+                } else {
+                    showExitDialog();
+                }
+            }
+        });
     }
 
     /**
@@ -124,6 +139,25 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             return true;
         }
         return false;
+    }
+
+    private void showExitDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.dialog_exit_app);
+
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
+        }
+
+        dialog.findViewById(R.id.btn_continue).setOnClickListener(v -> dialog.dismiss());
+        dialog.findViewById(R.id.btn_exit).setOnClickListener(v -> {
+            dialog.dismiss();
+            finishAffinity();
+        });
+
+        dialog.show();
     }
 
     /**
