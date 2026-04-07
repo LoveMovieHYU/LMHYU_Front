@@ -56,11 +56,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // 서랍(드로어)이 열려있다면 서랍을 닫기
                 if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
                     closeMyPageDrawer();
                 } else {
-                    // 서랍이 닫혀있다면 앱 종료 팝업 띄우기
                     showExitDialog();
                 }
             }
