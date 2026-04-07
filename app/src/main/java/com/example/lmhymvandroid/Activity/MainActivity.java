@@ -148,20 +148,15 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_exit_app);
 
-        // 배경을 투명하게 만들어 카드뷰의 둥근 모서리가 보이게 설정
         if (dialog.getWindow() != null) {
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            // 미리 만들어둔 위아래 슬라이드 애니메이션 적용
             dialog.getWindow().getAttributes().windowAnimations = R.style.DialogSlideAnimation;
         }
 
-        // '계속 사용' 버튼 (다이얼로그 닫기)
         dialog.findViewById(R.id.btn_continue).setOnClickListener(v -> dialog.dismiss());
-
-        // '종료하기' 버튼 (앱 완전 종료)
         dialog.findViewById(R.id.btn_exit).setOnClickListener(v -> {
             dialog.dismiss();
-            finishAffinity(); // 모든 액티비티를 메모리에서 날리고 앱 종료
+            finishAffinity();
         });
 
         dialog.show();
