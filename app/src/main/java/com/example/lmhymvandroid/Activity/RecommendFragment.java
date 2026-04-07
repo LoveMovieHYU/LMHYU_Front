@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,13 +41,16 @@ public class RecommendFragment extends Fragment {
     private MovieClickAdapter adapter;
     private MovieService movieService;
     private ImageView btnMenu;
-
     private ProgressBar pbMovieLoading;
-    private LinearLayout layoutBioHeader;
-    private TextView tvBioToggleText;
-    private CardView cardBiorhythm;
-    private CardView cardBiorhythmCollapsed;
+    private ConstraintLayout layoutBioHeader;
+    private LinearLayout layoutBiorhythmContent;
+    private ImageView btnBioToggle;
+    private View layoutBioDataContainer;
+    private View layoutBioInfoContainer;
+    private ImageView btnBioInfo;
+    private boolean isInfoShowing = false;
     private boolean isBioExpanded = true;
+    private View bgDim;
 
     @Nullable
     @Override
@@ -79,10 +82,18 @@ public class RecommendFragment extends Fragment {
         btnMenu = view.findViewById(R.id.btn_menu);
 
         layoutBioHeader = view.findViewById(R.id.layout_bio_header);
-        tvBioToggleText = view.findViewById(R.id.tv_bio_toggle_text);
-        cardBiorhythm = view.findViewById(R.id.card_biorhythm);
-        cardBiorhythmCollapsed = view.findViewById(R.id.card_biorhythm_collapsed);
-        layoutBioHeader.setOnClickListener(v -> toggleBiorhythmPanel());
+        layoutBiorhythmContent = view.findViewById(R.id.layout_biorhythm_content);
+        btnBioToggle = view.findViewById(R.id.btn_bio_toggle);
+
+        bgDim = view.findViewById(R.id.bg_dim);
+
+        layoutBioDataContainer = view.findViewById(R.id.layout_bio_data_container);
+        layoutBioInfoContainer = view.findViewById(R.id.layout_bio_info_container);
+        btnBioInfo = view.findViewById(R.id.btn_bio_info);
+
+        btnBioInfo.setOnClickListener(v -> toggleBioInfoPanel());
+        bgDim.setOnClickListener(v -> toggleBioInfoPanel());
+        btnBioToggle.setOnClickListener(v -> toggleBiorhythmPanel());
 
         btnMenu.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
@@ -105,13 +116,11 @@ public class RecommendFragment extends Fragment {
         isBioExpanded = !isBioExpanded;
 
         if (isBioExpanded) {
-            cardBiorhythm.setVisibility(View.VISIBLE);
-            cardBiorhythmCollapsed.setVisibility(View.GONE);
-            tvBioToggleText.setText("숨기기");
+            layoutBiorhythmContent.setVisibility(View.VISIBLE);
+            btnBioToggle.animate().rotation(0).setDuration(200).start();
         } else {
-            cardBiorhythm.setVisibility(View.GONE);
-            cardBiorhythmCollapsed.setVisibility(View.VISIBLE);
-            tvBioToggleText.setText("펼치기");
+            layoutBiorhythmContent.setVisibility(View.GONE);
+            btnBioToggle.animate().rotation(180).setDuration(200).start();
         }
     }
 
@@ -151,14 +160,12 @@ public class RecommendFragment extends Fragment {
     }
 
     private void loadRecommendedMovies() {
-
         pbMovieLoading.setVisibility(View.VISIBLE);
         rvMovieList.setVisibility(View.GONE);
 
         movieService.getRecommendedMovies().enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
-
                 pbMovieLoading.setVisibility(View.GONE);
                 rvMovieList.setVisibility(View.VISIBLE);
 
@@ -175,7 +182,6 @@ public class RecommendFragment extends Fragment {
                     List<MovieItem> topMovies = new ArrayList<>(movies.subList(0, limit));
 
                     adapter.setMovieList(topMovies);
-
                 } else {
                     Log.e("API_ERROR", "영화 리스트 로드 실패: " + response.code());
                     tvStatusMsg.setText("추천 영화를 불러오지 못했습니다.");
@@ -188,5 +194,36 @@ public class RecommendFragment extends Fragment {
                 Log.e("API_FAIL", t.getMessage());
             }
         });
+    }
+    private void toggleBioInfoPanel() {
+        isInfoShowing = !isInfoShowing;
+
+        if (isInfoShowing) {
+
+            bgDim.setVisibility(View.VISIBLE);
+            bgDim.setAlpha(0f);
+            bgDim.animate().alpha(1f).setDuration(250).start();
+
+            layoutBioInfoContainer.setVisibility(View.VISIBLE);
+            layoutBioInfoContainer.setTranslationY(1000f);
+            layoutBioInfoContainer.animate()
+                    .translationY(0f)
+                    .setDuration(250)
+                    .start();
+        } else {
+            // 배경 서서히 사라짐
+            bgDim.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction(() -> bgDim.setVisibility(View.GONE))
+                    .start();
+
+            // 팝업이 위에서 밑으로 슬라이드 다운
+            layoutBioInfoContainer.animate()
+                    .translationY(layoutBioInfoContainer.getHeight()) // 뷰의 높이만큼 밑으로 내려감
+                    .setDuration(200)
+                    .withEndAction(() -> layoutBioInfoContainer.setVisibility(View.GONE))
+                    .start();
+        }
     }
 }
