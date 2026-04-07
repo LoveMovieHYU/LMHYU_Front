@@ -16,6 +16,9 @@ public class BiorhythmResponse {
     @SerializedName("statusMessage")
     private String statusMessage;
 
+    @SerializedName("birthDay")
+    private String birthday;
+
     public BiorhythmResponse() {
     }
 
@@ -42,5 +45,7 @@ public class BiorhythmResponse {
     public String getStatusMessage() {
         return statusMessage;
     }
+
+    public String getBirthday() { return birthday; }
 
 }
