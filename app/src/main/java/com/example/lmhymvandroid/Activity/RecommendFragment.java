@@ -168,7 +168,7 @@ public class RecommendFragment extends Fragment {
 
                 if (response.isSuccessful() && response.body() != null) {
                     List<MovieItem> movies = response.body();
-                    System.out.println("영화를 몇개 가져올까~?" + movies.size());
+
                     adapter.setMovieList(movies);
                 } else {
                     Log.e("API_ERROR", "영화 리스트 로드 실패: " + response.code());
