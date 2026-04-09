@@ -22,6 +22,9 @@ public class MovieItem implements Serializable {
     @SerializedName("voteAverage")
     private double rating;
 
+    @SerializedName("popularity")
+    private double popularity;
+
     @SerializedName("genres")
     private List<GenreItem> genres;
 
