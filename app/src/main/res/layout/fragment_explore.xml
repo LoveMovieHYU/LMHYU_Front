@@ -78,68 +78,45 @@
                 android:paddingHorizontal="24dp"
                 android:paddingVertical="28dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="리듬 조절"
-                    android:textColor="#111111"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="20dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="감정"
-                    android:textColor="#424242"
-                    android:textSize="14sp"
-                    android:textStyle="bold"/>
-
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/slider_emotion"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/Theme.MaterialComponents.DayNight"
-                    style="@style/Widget.MaterialComponents.Slider"
-                    android:valueFrom="-100.0"
-                    android:valueTo="100.0"
-                    android:value="0.0"
-                    android:stepSize="1.0"
-                    app:tickVisible="false"
-                    app:thumbRadius="12dp"
-                    app:trackHeight="6dp"
-                    app:haloRadius="0dp"
-                    app:thumbColor="#FF4081"
-                    app:trackColorActive="#FF4081"
-                    app:trackColorInactive="#E0E0E0"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="20dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="지능"
-                    android:textColor="#424242"
-                    android:textSize="14sp"
-                    android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:text="리듬 조절"
+                        android:textColor="#111111"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/slider_intellect"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:theme="@style/Theme.MaterialComponents.DayNight"
-                    style="@style/Widget.MaterialComponents.Slider"
-                    android:valueFrom="-100.0"
-                    android:valueTo="100.0"
-                    android:value="0.0"
-                    android:stepSize="1.0"
-                    app:tickVisible="false"
-                    app:thumbRadius="12dp"
-                    app:trackHeight="6dp"
-                    app:haloRadius="0dp"
-                    app:thumbColor="#448AFF"
-                    app:trackColorActive="#448AFF"
-                    app:trackColorInactive="#E0E0E0"
-                    android:layout_marginBottom="8dp"/>
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardProfileImage"
+                        android:layout_width="80dp"
+                        android:layout_height="30dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:cardCornerRadius="55dp"
+                        app:cardBackgroundColor="#FFFFFF"
+                        app:cardElevation="0dp"
+                        app:strokeColor="#000000"
+                        app:strokeWidth="1dp">
+
+                        <TextView
+                            android:id="@+id/btn_random"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="?attr/selectableItemBackground"
+                            android:clickable="true"
+                            android:text="Random"
+                            android:textColor="#000000"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </com.google.android.material.card.MaterialCardView>
+                </RelativeLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -147,37 +124,142 @@
                     android:text="신체"
                     android:textColor="#424242"
                     android:textSize="14sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
 
-                <com.google.android.material.slider.Slider
-                    android:id="@+id/slider_physical"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:theme="@style/Theme.MaterialComponents.DayNight"
-                    style="@style/Widget.MaterialComponents.Slider"
-                    android:valueFrom="-100.0"
-                    android:valueTo="100.0"
-                    android:value="0.0"
-                    android:stepSize="1.0"
-                    app:tickVisible="false"
-                    app:thumbRadius="12dp"
-                    app:trackHeight="6dp"
-                    app:haloRadius="0dp"
-                    app:thumbColor="#00E676"
-                    app:trackColorActive="#00E676"
-                    app:trackColorInactive="#E0E0E0"
-                    android:layout_marginBottom="24dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/slider_physical"
+                        style="@style/Widget.MaterialComponents.Slider"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:stepSize="1.0"
+                        android:theme="@style/Theme.MaterialComponents.DayNight"
+                        android:value="0.0"
+                        android:valueFrom="-100.0"
+                        android:valueTo="100.0"
+                        app:haloRadius="0dp"
+                        app:thumbColor="#FF4081"
+                        app:thumbRadius="12dp"
+                        app:tickVisible="false"
+                        app:trackColorActive="#FF4081"
+                        app:trackColorInactive="#E0E0E0"
+                        app:trackHeight="6dp" />
+
+                    <TextView
+                        android:id="@+id/tv_physical_val"
+                        android:layout_width="28dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="0"
+                        android:textColor="#424242"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="감정"
+                    android:textColor="#424242"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/slider_emotion"
+                        style="@style/Widget.MaterialComponents.Slider"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:stepSize="1.0"
+                        android:theme="@style/Theme.MaterialComponents.DayNight"
+                        android:value="0.0"
+                        android:valueFrom="-100.0"
+                        android:valueTo="100.0"
+                        app:haloRadius="0dp"
+                        app:thumbColor="#448AFF"
+                        app:thumbRadius="12dp"
+                        app:tickVisible="false"
+                        app:trackColorActive="#448AFF"
+                        app:trackColorInactive="#E0E0E0"
+                        app:trackHeight="6dp" />
+
+                    <TextView
+                        android:id="@+id/tv_emotion_val"
+                        android:layout_width="28dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="0"
+                        android:textColor="#424242"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="지성"
+                    android:textColor="#424242"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="24dp">
+
+                    <com.google.android.material.slider.Slider
+                        android:id="@+id/slider_intellect"
+                        style="@style/Widget.MaterialComponents.Slider"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:stepSize="1.0"
+                        android:theme="@style/Theme.MaterialComponents.DayNight"
+                        android:value="0.0"
+                        android:valueFrom="-100.0"
+                        android:valueTo="100.0"
+                        app:haloRadius="0dp"
+                        app:thumbColor="#00E676"
+                        app:thumbRadius="12dp"
+                        app:tickVisible="false"
+                        app:trackColorActive="#00E676"
+                        app:trackColorInactive="#E0E0E0"
+                        app:trackHeight="6dp" />
+
+                    <TextView
+                        android:id="@+id/tv_intellect_val"
+                        android:layout_width="28dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="0"
+                        android:textColor="#424242"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_setting_complete"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:background="@drawable/bg_button_dark_rounded"
+                    android:stateListAnimator="@null"
                     android:text="설정 완료"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:stateListAnimator="@null"/>
+                    android:textStyle="bold" />
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -210,10 +292,10 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="20dp"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_rounded_navy"
+            android:background="@drawable/bg_rounded_gray"
             android:padding="16dp"
             android:text="감정을 낮추고 지성을 높이면 차분하고 몰입감 있는 영화가 추천돼요"
-            android:textColor="#374151"
+            android:textColor="#FFFFFF"
             android:textSize="14sp"
             app:layout_constraintTop_toBottomOf="@+id/tv_recommend_title" />
 
