@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,6 +42,8 @@ public class ExploreFragment extends Fragment {
     private Button btnSettingComplete;
     private ImageView btnSearchIcon;
     private RecyclerView rvExploreMovieList;
+    private TextView btnRandom;
+    private TextView tvEmotionVal, tvIntellectVal, tvPhysicalVal;
 
     // 어댑터 및 통신 서비스
     private MovieClickAdapter adapter;
@@ -76,8 +79,13 @@ public class ExploreFragment extends Fragment {
         sliderIntellect = view.findViewById(R.id.slider_intellect); // 지성 (Blue)
         sliderPhysical = view.findViewById(R.id.slider_physical);   // 신체 (Green)
 
+        tvEmotionVal = view.findViewById(R.id.tv_emotion_val);
+        tvIntellectVal = view.findViewById(R.id.tv_intellect_val);
+        tvPhysicalVal = view.findViewById(R.id.tv_physical_val);
+
         // 버튼 연결
         btnSettingComplete = view.findViewById(R.id.btn_setting_complete);
+        btnRandom = view.findViewById(R.id.btn_random);
         btnSearchIcon = view.findViewById(R.id.btn_search_icon);
 
         tvDescBox = view.findViewById(R.id.tv_desc_box);
@@ -100,26 +108,38 @@ public class ExploreFragment extends Fragment {
     }
 
     private void setupListeners() {
-        // [1] 설정 완료 버튼 클릭 -> API 호출
+
+        sliderEmotion.addOnChangeListener((slider, value, fromUser) -> tvEmotionVal.setText(String.valueOf((int) value)));
+        sliderIntellect.addOnChangeListener((slider, value, fromUser) -> tvIntellectVal.setText(String.valueOf((int) value)));
+        sliderPhysical.addOnChangeListener((slider, value, fromUser) -> tvPhysicalVal.setText(String.valueOf((int) value)));
+
+        btnRandom.setOnClickListener(v -> {
+            Random random = new Random();
+
+            float randEmotion = random.nextInt(201) - 100;
+            float randIntellect = random.nextInt(201) - 100;
+            float randPhysical = random.nextInt(201) - 100;
+
+            // setValue()를 호출하면 UI 슬라이더가 움직이며 자동으로 addOnChangeListener를 트리거하여 텍스트도 변경됨
+            sliderEmotion.setValue(randEmotion);
+            sliderIntellect.setValue(randIntellect);
+            sliderPhysical.setValue(randPhysical);
+        });
+
         btnSettingComplete.setOnClickListener(v -> {
-            // 슬라이더 값 가져오기 (float 타입)
             float emotionVal = sliderEmotion.getValue();
             float intellectVal = sliderIntellect.getValue();
             float physicalVal = sliderPhysical.getValue();
 
-            // 로그 확인용
             Log.d("EXPLORE_LOG", "요청 값 -> 감정:" + emotionVal + ", 지성:" + intellectVal + ", 신체:" + physicalVal);
 
-            // 데이터 요청
             loadCustomMovies(physicalVal, emotionVal, intellectVal);
         });
 
-        // [2] 돋보기 아이콘 클릭 -> 검색 페이지로 이동
         btnSearchIcon.setOnClickListener(v -> {
-            // SearchFragment로 화면 교체
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.main_frame_layout, new SearchFragment()) // SearchFragment가 있어야 함
-                    .addToBackStack(null) // 뒤로가기 버튼 누르면 다시 돌아오게 함
+                    .replace(R.id.main_frame_layout, new SearchFragment())
+                    .addToBackStack(null)
                     .commit();
         });
     }
