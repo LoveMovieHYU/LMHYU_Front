@@ -48,6 +48,11 @@ public class RecommendFragment extends Fragment {
     private boolean isInfoShowing = false;
     private boolean isBioExpanded = true;
     private View bgDim;
+    private ImageView btnBioGraph;
+    private View layoutBioGraphContainer;
+    private com.example.lmhymvandroid.View.BiorhythmGraphView bioGraphView;
+    private TextView tvGraphPhysPct, tvGraphEmotPct, tvGraphIntePct;
+    private boolean isGraphExpanded = false;
 
     @Nullable
     @Override
@@ -91,6 +96,14 @@ public class RecommendFragment extends Fragment {
         btnBioInfo.setOnClickListener(v -> toggleBioInfoPanel());
         bgDim.setOnClickListener(v -> toggleBioInfoPanel());
         btnBioToggle.setOnClickListener(v -> toggleBiorhythmPanel());
+
+        btnBioGraph = view.findViewById(R.id.btn_bio_graph);
+        layoutBioGraphContainer = view.findViewById(R.id.layout_bio_graph_container);
+        bioGraphView = view.findViewById(R.id.bio_graph_view);
+        tvGraphPhysPct = view.findViewById(R.id.tv_graph_phys_pct);
+        tvGraphEmotPct = view.findViewById(R.id.tv_graph_emot_pct);
+        tvGraphIntePct = view.findViewById(R.id.tv_graph_inte_pct);
+        btnBioGraph.setOnClickListener(v -> toggleGraphPanel());
 
         btnMenu.setOnClickListener(v -> {
             if (getActivity() instanceof MainActivity) {
@@ -150,10 +163,23 @@ public class RecommendFragment extends Fragment {
 
     private void updateBiorhythmUI(BiorhythmResponse data) {
         if (data == null) return;
-        tvPhysical.setText(String.valueOf(Math.round(data.getPhysicalIndex())));
-        tvEmotional.setText(String.valueOf(Math.round(data.getEmotionalIndex())));
-        tvIntellectual.setText(String.valueOf(Math.round(data.getIntellectualIndex())));
+
+        long phys = Math.round(data.getPhysicalIndex());
+        long emot = Math.round(data.getEmotionalIndex());
+        long inte = Math.round(data.getIntellectualIndex());
+
+        tvPhysical.setText(String.valueOf(phys));
+        tvEmotional.setText(String.valueOf(emot));
+        tvIntellectual.setText(String.valueOf(inte));
         tvStatusMsg.setText(data.getStatusMessage());
+
+        tvGraphPhysPct.setText("신체 " + phys + "%");
+        tvGraphEmotPct.setText("감정 " + emot + "%");
+        tvGraphIntePct.setText("지성 " + inte + "%");
+
+        if(data.getBirthday() != null) {
+            bioGraphView.setBirthDate(data.getBirthday());
+        }
     }
 
     private void loadRecommendedMovies() {
@@ -211,6 +237,22 @@ public class RecommendFragment extends Fragment {
                     .translationY(layoutBioInfoContainer.getHeight()) // 뷰의 높이만큼 밑으로 내려감
                     .setDuration(200)
                     .withEndAction(() -> layoutBioInfoContainer.setVisibility(View.GONE))
+                    .start();
+        }
+    }
+
+    private void toggleGraphPanel() {
+        isGraphExpanded = !isGraphExpanded;
+
+        if (isGraphExpanded) {
+            layoutBioGraphContainer.setVisibility(View.VISIBLE);
+            layoutBioGraphContainer.setAlpha(0f);
+            layoutBioGraphContainer.animate().alpha(1f).setDuration(300).start();
+        } else {
+            layoutBioGraphContainer.animate()
+                    .alpha(0f)
+                    .setDuration(200)
+                    .withEndAction(() -> layoutBioGraphContainer.setVisibility(View.GONE))
                     .start();
         }
     }

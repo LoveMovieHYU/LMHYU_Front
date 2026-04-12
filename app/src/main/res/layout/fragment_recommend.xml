@@ -259,6 +259,60 @@
                     android:textColor="#A0AEC0"
                     android:textSize="14sp"
                     android:lineSpacingExtra="6dp" />
+
+                <LinearLayout
+                    android:id="@+id/layout_bio_graph_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="20dp"
+                    android:visibility="gone">
+
+                    <com.example.lmhymvandroid.View.BiorhythmGraphView
+                        android:id="@+id/bio_graph_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="10dp"
+                        android:paddingBottom="10dp">
+
+                        <TextView
+                            android:id="@+id/tv_graph_phys_pct"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="신체 --%"
+                            android:textColor="#F43F5E"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:layout_marginEnd="20dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_graph_emot_pct"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="감정 --%"
+                            android:textColor="#3B82F6"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:layout_marginHorizontal="20dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_graph_inte_pct"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="지성 --%"
+                            android:textColor="#10B981"
+                            android:textStyle="bold"
+                            android:textSize="14sp"
+                            android:layout_marginStart="20dp"/>
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
