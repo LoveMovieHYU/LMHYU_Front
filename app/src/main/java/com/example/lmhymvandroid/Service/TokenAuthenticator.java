@@ -23,7 +23,7 @@ public class TokenAuthenticator implements Authenticator {
     private final TokenManager tokenManager;
     private final AuthService authService;
 
-    public TokenAuthenticator(Context context, AuthService authService) {
+    public TokenAuthenticator(Context context, AuthService authService, TokenManager tokenManager) {
         this.context = context;
         this.tokenManager = new TokenManager(context);
         this.authService = authService;
