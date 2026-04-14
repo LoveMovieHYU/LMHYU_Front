@@ -66,9 +66,18 @@ public class RecommendFragment extends Fragment {
 
         initViews(view);
         initRetrofit();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshData();
+    }
 
-        loadBiorhythmData();
-        loadRecommendedMovies();
+    private void refreshData() {
+        if (movieService != null) {
+            loadBiorhythmData();
+            loadRecommendedMovies();
+        }
     }
 
     private void initViews(View view) {

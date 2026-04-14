@@ -201,6 +201,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     ToastUtil.show(ProfileEditActivity.this, "회원 정보가 성공적으로 수정되었습니다.");
+                    setResult(RESULT_OK);
                     finish();
                 } else {
                     ToastUtil.show(ProfileEditActivity.this, "수정 실패 (코드: " + response.code() + ")");
