@@ -153,6 +153,9 @@ public class RecommendFragment extends Fragment {
         movieService.getBiorhythmAnalyze().enqueue(new Callback<BiorhythmResponse>() {
             @Override
             public void onResponse(Call<BiorhythmResponse> call, Response<BiorhythmResponse> response) {
+                // 화면 이탈 후 콜백이 도착하면 뷰 접근 시 크래시하므로 방어
+                if (!isAdded()) return;
+
                 if (response.isSuccessful() && response.body() != null) {
                     BiorhythmResponse data = response.body();
                     updateBiorhythmUI(data);
@@ -164,6 +167,9 @@ public class RecommendFragment extends Fragment {
 
             @Override
             public void onFailure(Call<BiorhythmResponse> call, Throwable t) {
+                // 화면 이탈 후 콜백이 도착하면 뷰 접근 시 크래시하므로 방어
+                if (!isAdded()) return;
+
                 tvStatusMsg.setText("서버 연결 상태를 확인해주세요.");
                 Log.e("API_FAIL", t.getMessage());
             }
@@ -198,6 +204,9 @@ public class RecommendFragment extends Fragment {
         movieService.getRecommendedMovies().enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                // 화면 이탈 후 콜백이 도착하면 뷰/어댑터 접근 시 크래시하므로 방어
+                if (!isAdded()) return;
+
                 pbMovieLoading.setVisibility(View.GONE);
                 rvMovieList.setVisibility(View.VISIBLE);
 
@@ -213,6 +222,9 @@ public class RecommendFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                // 화면 이탈 후 콜백이 도착하면 뷰 접근 시 크래시하므로 방어
+                if (!isAdded()) return;
+
                 pbMovieLoading.setVisibility(View.GONE);
                 Log.e("API_FAIL", t.getMessage());
             }

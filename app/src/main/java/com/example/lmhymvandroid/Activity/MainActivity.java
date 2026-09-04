@@ -12,9 +12,11 @@ import android.view.Window;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
 import androidx.core.splashscreen.SplashScreen;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -35,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private TokenManager tokenManager;
     private AuthService authService;
     private boolean isReady = false;
-    private DrawerLayout drawerLayout;
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +58,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                    closeMyPageDrawer();
+                // 검색 등 백스택에 쌓인 화면이 있으면 먼저 되돌린다
+                FragmentManager fm = getSupportFragmentManager();
+                if (fm.getBackStackEntryCount() > 0) {
+                    fm.popBackStack();
+                } else if (bottomNav != null && bottomNav.getSelectedItemId() != R.id.nav_recommend) {
+                    // 추천 탭이 아니면 추천 탭으로 우선 이동
+                    bottomNav.setSelectedItemId(R.id.nav_recommend);
                 } else {
                     showExitDialog();
                 }
@@ -80,19 +87,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Log.d("LoginCheck", "토큰 확인됨: 메인 화면 구성 시작");
             setContentView(R.layout.activity_main);
 
-            //  드로어 레이아웃 초기화 (XML의 id와 일치해야 함)
-            drawerLayout = findViewById(R.id.drawer_layout);
+            // 엣지 투 엣지: 시스템 바 뒤까지 그리고 하단 내비에 인셋을 반영한다
+            WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
-            // 네비게이션 뷰 설정
-            BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+            // 네비게이션 뷰 설정 (추천/탐색/검색/마이페이지)
+            bottomNav = findViewById(R.id.bottom_navigation);
             bottomNav.setOnItemSelectedListener(this);
+
+            // 하단 시스템 바(제스처/내비게이션 바)만큼 바텀 내비에 패딩을 준다
+            ViewCompat.setOnApplyWindowInsetsListener(bottomNav, (v, insets) -> {
+                Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), bars.bottom);
+                return insets;
+            });
 
             // 초기 프래그먼트 설정
             if (savedInstanceState == null) {
                 replaceFragment(new RecommendFragment());
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.drawer_my_page_container, new MyPageFragment())
-                        .commit();
             }
 
             // 모든 설정이 완료되었으므로 스플래시 화면을 걷어냅니다.
@@ -100,17 +111,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
     }
 
-    // 햄버거 버튼을 누르면 호출할 메서드 (우측 드로어 열기)
+    /**
+     * 추천 화면의 메뉴 버튼에서 호출한다. 마이페이지 탭으로 전환한다.
+     * (기존 드로어 열기를 대체 — 호출부 시그니처는 유지)
+     */
     public void openMyPageDrawer() {
-        if (drawerLayout != null && !drawerLayout.isDrawerOpen(GravityCompat.END)) {
-            drawerLayout.openDrawer(GravityCompat.END);
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_mypage);
         }
     }
 
-    // X 버튼을 누르면 호출할 메서드 (우측 드로어 닫기)
+    /**
+     * 마이페이지의 닫기 버튼/뒤로가기에서 호출한다. 추천 탭으로 되돌린다.
+     * (기존 드로어 닫기를 대체 — 호출부 시그니처는 유지)
+     */
     public void closeMyPageDrawer() {
-        if (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.END)) {
-            drawerLayout.closeDrawer(GravityCompat.END);
+        if (bottomNav != null && bottomNav.getSelectedItemId() != R.id.nav_recommend) {
+            bottomNav.setSelectedItemId(R.id.nav_recommend);
         }
     }
 
@@ -136,6 +153,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             return true;
         } else if (itemId == R.id.nav_explore) {
             replaceFragment(new ExploreFragment());
+            return true;
+        } else if (itemId == R.id.nav_search) {
+            replaceFragment(new SearchFragment());
+            return true;
+        } else if (itemId == R.id.nav_mypage) {
+            replaceFragment(new MyPageFragment());
             return true;
         }
         return false;

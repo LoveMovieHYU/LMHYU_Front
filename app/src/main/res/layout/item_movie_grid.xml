@@ -20,6 +20,7 @@
             android:id="@+id/iv_poster"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="영화 포스터"
             android:scaleType="centerCrop"
             android:src="@color/cardview_dark_background" />
     </androidx.cardview.widget.CardView>
@@ -33,7 +34,7 @@
         android:gravity="center"
         android:maxLines="1"
         android:text="영화 제목"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/on_surface_dark"
         android:textSize="12sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

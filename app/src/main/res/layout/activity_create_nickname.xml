@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nickname_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#121212">
+    android:background="@color/app_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -17,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
             android:text="프로필 설정"
-            android:textColor="#F4F5F7"
+            android:textColor="@color/text_offwhite"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="언제든 바꿀 수 있습니다"
-            android:textColor="#C9CBD6"
+            android:textColor="@color/text_subtle"
             app:layout_constraintTop_toBottomOf="@id/textViewTitle"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -38,7 +39,7 @@
             android:layout_width="110dp"
             android:layout_height="110dp"
             android:layout_marginTop="32dp"
-            app:cardBackgroundColor="#D1D5DC"
+            app:cardBackgroundColor="@color/avatar_bg"
             app:cardCornerRadius="55dp"
             app:cardElevation="0dp"
             app:layout_constraintTop_toBottomOf="@id/textViewSubTitle"
@@ -50,6 +51,8 @@
                 android:layout_width="65dp"
                 android:layout_height="65dp"
                 android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_profile_new" />
         </androidx.cardview.widget.CardView>
         <TextView
@@ -57,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:textColor="#F4F5F7"
+            android:textColor="@color/text_offwhite"
             android:text="닉네임"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/cardProfileImage"
@@ -78,7 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:textColor="#F4F5F7"
+            android:textColor="@color/text_offwhite"
             android:text="성별"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/editTextNickname"
@@ -101,7 +104,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:text="남성"
-                android:textColor="#8A8F9E"
+                android:textColor="@color/text_gender"
                 android:textSize="16sp"
                 android:background="@drawable/bg_gender_selector"   />
 
@@ -114,7 +117,7 @@
                 android:button="@null"
                 android:gravity="center"
                 android:text="여성"
-                android:textColor="#8A8F9E"
+                android:textColor="@color/text_gender"
                 android:textSize="16sp"
                 android:background="@drawable/bg_gender_selector"   />
         </RadioGroup>
@@ -124,7 +127,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:textColor="#F4F5F7"
+            android:textColor="@color/text_offwhite"
             android:text="생년월일"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/radioGroupGender"
@@ -145,7 +148,7 @@
                 android:gravity="center_vertical"
                 android:hint="YYYY-MM-DD"
                 android:paddingStart="16dp"
-                android:textColor="#000000"
+                android:textColor="@color/on_surface_light"
                 android:textSize="16sp" />
 
             <ImageView
@@ -155,6 +158,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginEnd="16dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_calendar" />
         </RelativeLayout>
 
@@ -178,7 +183,7 @@
                     android:id="@+id/calendarView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:mcv_selectionColor="#4A4A8A" />
+                    app:mcv_selectionColor="@color/brand_accent" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -203,7 +208,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="바이오리듬이란?"
-                android:textColor="#000000"
+                android:textColor="@color/on_surface_light"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -227,6 +232,8 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
                         android:src="@drawable/ic_physical"
                         android:background="@drawable/bg_icon_rounded"
                         android:padding="8dp"/>
@@ -236,7 +243,7 @@
                         android:layout_marginTop="4dp"
                         android:text="신체"
                         android:textSize="12sp"
-                        android:textColor="#666666"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -248,6 +255,8 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
                         android:src="@drawable/ic_emotional"
                         android:background="@drawable/bg_icon_rounded"
                         android:padding="8dp"/>
@@ -257,7 +266,7 @@
                         android:layout_marginTop="4dp"
                         android:text="감정"
                         android:textSize="12sp"
-                        android:textColor="#666666"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -269,6 +278,8 @@
                     <ImageView
                         android:layout_width="40dp"
                         android:layout_height="40dp"
+                        android:contentDescription="@null"
+                        android:importantForAccessibility="no"
                         android:src="@drawable/ic_intellectual"
                         android:background="@drawable/bg_icon_rounded"
                         android:padding="8dp"/>
@@ -278,7 +289,7 @@
                         android:layout_marginTop="4dp"
                         android:text="지성"
                         android:textSize="12sp"
-                        android:textColor="#666666"/>
+                        android:textColor="@color/text_muted"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -288,7 +299,7 @@
                 android:layout_marginTop="16dp"
                 android:lineSpacingExtra="4dp"
                 android:text="바이오리듬은 신체,감정,지성의 흐름을 통해 하루의 컨디션을 살펴보는 개념이에요. 생년월일을 기준으로 오늘의 상태를 계산해 잘 맞는 영화를 추천하는 데 활용돼요."
-                android:textColor="#666666"
+                android:textColor="@color/text_muted"
                 android:textSize="13sp"
                 app:layout_constraintTop_toBottomOf="@id/bioIconGroup" />
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -300,7 +311,7 @@
             android:layout_marginTop="32dp"
             android:layout_marginBottom="16dp"
             android:text="오늘의 추천 영화 보러가기"
-            android:textColor="#F4F5F7"
+            android:textColor="@color/text_offwhite"
             android:textSize="16sp"
             android:textStyle="bold"
             android:background="@drawable/bg_rounded_navy"

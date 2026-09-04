@@ -84,7 +84,8 @@ public class FavoriteMoviesActivity extends AppCompatActivity {
             return;
         }
 
-        authService.getFavoriteMovies("Bearer " + token).enqueue(new Callback<List<MovieSummaryResponseDTO>>() {
+        // 인증 헤더는 AuthInterceptor 가 자동 부착한다
+        authService.getFavoriteMovies().enqueue(new Callback<List<MovieSummaryResponseDTO>>() {
             @Override
             public void onResponse(Call<List<MovieSummaryResponseDTO>> call, Response<List<MovieSummaryResponseDTO>> response) {
                 if (response.isSuccessful() && response.body() != null) {

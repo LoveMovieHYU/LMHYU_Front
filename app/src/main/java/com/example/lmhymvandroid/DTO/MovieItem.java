@@ -22,9 +22,6 @@ public class MovieItem implements Serializable {
     @SerializedName("voteAverage")
     private double rating;
 
-    @SerializedName("popularity")
-    private double popularity;
-
     @SerializedName("genres")
     private List<GenreItem> genres;
 
@@ -36,7 +33,7 @@ public class MovieItem implements Serializable {
     public double getRating() { return rating; }
     public List<GenreItem> getGenres() { return genres; }
 
-    public MovieItem(int id, String title, String posterUrl, double rating, String releaseDate, List<GenreItem> genres) {
+    public MovieItem(long id, String title, String posterUrl, double rating, String releaseDate, List<GenreItem> genres) {
         this.id = id;
         this.title = title;
         this.posterUrl = posterUrl;

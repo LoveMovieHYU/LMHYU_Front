@@ -6,6 +6,8 @@ import com.example.lmhymvandroid.Service.AuthInterceptor;
 import com.example.lmhymvandroid.Service.AuthService;
 import com.example.lmhymvandroid.Service.TokenAuthenticator;
 
+import java.util.concurrent.TimeUnit;
+
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -26,6 +28,9 @@ public class RetrofitClient {
             AuthService authService = authRetrofit.create(AuthService.class);
 
             OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(15, TimeUnit.SECONDS)
+                    .writeTimeout(15, TimeUnit.SECONDS)
                     .addInterceptor(new AuthInterceptor(tokenManager))
                     .authenticator(new TokenAuthenticator(context.getApplicationContext(), authService, tokenManager))
                     .build();

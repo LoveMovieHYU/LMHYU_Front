@@ -11,4 +11,14 @@
         android:icon="@drawable/ic_explore"
         android:title="탐색" />
 
+    <item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_search"
+        android:title="검색" />
+
+    <item
+        android:id="@+id/nav_mypage"
+        android:icon="@drawable/ic_mypage"
+        android:title="마이페이지" />
+
 </menu>

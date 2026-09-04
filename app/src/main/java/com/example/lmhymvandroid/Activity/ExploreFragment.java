@@ -151,6 +151,8 @@ public class ExploreFragment extends Fragment {
         movieService.getCustomRecommendations(p, e, i).enqueue(new Callback<List<MovieItem>>() {
             @Override
             public void onResponse(Call<List<MovieItem>> call, Response<List<MovieItem>> response) {
+                // detach 후 콜백이 도착하면 getContext()가 null 이 되어 NPE 발생하므로 방어
+                if (!isAdded() || getContext() == null) return;
 
                 pbExploreLoading.setVisibility(View.GONE);
 
@@ -162,18 +164,20 @@ public class ExploreFragment extends Fragment {
                         adapter.setMovieList(movies);
                         rvExploreMovieList.setVisibility(View.VISIBLE);
                     } else {
-                        ToastUtil.show(getContext(), "해당 조건의 추천 영화가 없습니다.");
+                        ToastUtil.showSnackbar(getView(), "해당 조건의 추천 영화가 없습니다.");
                         tvDescBox.setText("해당 조건의 영화가 없습니다. 슬라이더를 다시 조절해 보세요.");
                         tvDescBox.setVisibility(View.VISIBLE);
                     }
                 } else {
                     Log.e("API_ERROR", "탐색 실패: " + response.code());
-                    ToastUtil.show(getContext(), "데이터를 불러오지 못했습니다.");
+                    ToastUtil.showSnackbar(getView(), "데이터를 불러오지 못했습니다.");
                 }
             }
 
             @Override
             public void onFailure(Call<List<MovieItem>> call, Throwable t) {
+                // detach 후 콜백이 도착하면 getContext()가 null 이 되어 NPE 발생하므로 방어
+                if (!isAdded() || getContext() == null) return;
 
                 pbExploreLoading.setVisibility(View.GONE);
                 tvDescBox.setVisibility(View.VISIBLE);
@@ -181,7 +185,7 @@ public class ExploreFragment extends Fragment {
                 Log.e("API_FAIL", "통신/파싱 실패 원인: " + t.getMessage());
                 t.printStackTrace();
 
-                ToastUtil.show(getContext(), "서버 연결을 확인해주세요.");
+                ToastUtil.showSnackbar(getView(), "서버 연결을 확인해주세요.");
             }
         });
     }

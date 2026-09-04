@@ -103,9 +103,13 @@ public class MyPageFragment extends Fragment {
         String token = tokenManager.getAccessToken();
         if (token == null) return;
 
-        authService.getUserInfo("Bearer " + token).enqueue(new Callback<UserResponseDTO>() {
+        // 인증 헤더는 AuthInterceptor 가 자동 부착한다
+        authService.getUserInfo().enqueue(new Callback<UserResponseDTO>() {
             @Override
             public void onResponse(Call<UserResponseDTO> call, Response<UserResponseDTO> response) {
+                // 화면 이탈 후 콜백이 도착하면 뷰 접근 시 크래시하므로 방어
+                if (!isAdded()) return;
+
                 if (response.isSuccessful() && response.body() != null) {
                     String nickname = response.body().getNickname();
                     tvUserName.setText(nickname != null && !nickname.isEmpty() ? nickname : "Nickname");
@@ -122,9 +126,13 @@ public class MyPageFragment extends Fragment {
         String token = tokenManager.getAccessToken();
         if (token == null) return;
 
-        authService.getFavoriteMovies("Bearer " + token).enqueue(new Callback<List<MovieSummaryResponseDTO>>() {
+        // 인증 헤더는 AuthInterceptor 가 자동 부착한다
+        authService.getFavoriteMovies().enqueue(new Callback<List<MovieSummaryResponseDTO>>() {
             @Override
             public void onResponse(Call<List<MovieSummaryResponseDTO>> call, Response<List<MovieSummaryResponseDTO>> response) {
+                // 화면 이탈 후 콜백이 도착하면 뷰/어댑터 접근 시 크래시하므로 방어
+                if (!isAdded()) return;
+
                 if (response.isSuccessful() && response.body() != null) {
                     likedMovieList.clear();
                     likedMovieList.addAll(response.body());
