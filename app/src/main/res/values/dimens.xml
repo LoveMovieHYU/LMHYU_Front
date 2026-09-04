@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 접근성: 최소 터치 타깃 크기 -->
+    <dimen name="touch_target_min">48dp</dimen>
+
+    <!-- 간격 스케일 -->
+    <dimen name="space_xs">4dp</dimen>
+    <dimen name="space_s">8dp</dimen>
+    <dimen name="space_m">16dp</dimen>
+    <dimen name="space_l">20dp</dimen>
+    <dimen name="space_xl">24dp</dimen>
+</resources>

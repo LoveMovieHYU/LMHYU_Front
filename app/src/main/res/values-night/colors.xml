@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        다크 모드 대응 값. 시맨틱 이름은 default 와 동일하고 값만 다크에 맞춘다.
+        밝은 표면은 어두운 표면으로, 어두운 배경 위 텍스트는 대비 4.5:1 이상을 목표로 조정.
+        이미 어두운 화면(추천/탐색/검색 등)은 값을 유지한다.
+    -->
+
+    <!-- 기본 흑백/공통 -->
+    <color name="loading_gray">#333333</color>
+    <color name="red">#FFFF5252</color>
+
+    <!-- ===== 표면(배경) ===== -->
+    <color name="app_background">#121212</color>
+    <color name="app_background_alt">#0D0D0D</color>
+    <color name="card_dark">#161B22</color>
+    <color name="card_reason_dark">#1E2434</color>
+    <color name="surface_bright">#1E1E1E</color>          <!-- 밝은 카드/다이얼로그 → 어두운 표면 -->
+    <color name="surface_bright_variant">#262626</color>  <!-- 밝은 폼/보조 배경 → 어두운 표면 -->
+
+    <!-- ===== 전경(텍스트/아이콘) ===== -->
+    <color name="on_surface_dark">#FFFFFF</color>
+    <color name="text_offwhite">#F4F5F7</color>
+    <color name="text_offwhite_alt">#F3F4F6</color>
+    <color name="on_surface_light">#EDEDED</color>        <!-- 밝은 표면이 어두워지므로 밝은 텍스트로 -->
+    <color name="on_card_title">#EDEDED</color>
+    <color name="on_card_dark">#E6E6E6</color>
+    <color name="text_secondary">#9E9E9E</color>
+    <color name="text_tertiary">#BDBDBD</color>
+    <color name="text_muted">#9AA0A6</color>
+    <color name="text_hint">#8A8A8A</color>
+    <color name="text_detail_meta">#C4C4C4</color>
+    <color name="text_detail_label">#DDDDDD</color>
+    <color name="text_on_light_muted">#B8B8B8</color>
+    <color name="text_status">#A0AEC0</color>
+    <color name="text_caption">#9AA6B8</color>
+    <color name="text_caption_strong">#AEB6C4</color>
+    <color name="text_subtle">#C9CBD6</color>
+    <color name="text_gender">#A6ABBA</color>
+    <color name="text_on_card_label">#C8C8C8</color>
+
+    <!-- ===== 브랜드/액션 ===== -->
+    <color name="brand_primary">#3B4668</color>          <!-- 다크 배경 대비 확보 위해 밝힌 네이비 -->
+    <color name="brand_on_primary">#FFFFFF</color>
+    <color name="brand_accent">#6E6EB0</color>
+    <color name="naver_green">#03C75A</color>
+    <color name="login_google_bg">#FFFFFF</color>
+    <color name="login_google_text">#000000</color>
+    <color name="button_neutral">#5A5A5A</color>
+
+    <!-- ===== 아웃라인/구분선/스크림 ===== -->
+    <color name="divider_on_dark">#33FFFFFF</color>
+    <color name="divider_on_light">#3A3A3A</color>
+    <color name="neutral_divider">#3A3F45</color>
+    <color name="neutral_placeholder">#333333</color>
+    <color name="avatar_bg">#3A3A3A</color>
+    <color name="handle_bar">#4A4A4A</color>
+    <color name="scrim">#B3000000</color>
+
+    <!-- ===== 에러/좋아요 ===== -->
+    <color name="danger_red">#FF6B6B</color>
+    <color name="danger_red_alt">#FF6B60</color>
+
+    <!-- ===== 바이오리듬/그래프/슬라이더 강조 (공통 고정) ===== -->
+    <color name="bio_physical">#FF8A8A</color>
+    <color name="bio_emotional">#8AA4FF</color>
+    <color name="bio_intellectual">#6FCF97</color>
+    <color name="graph_physical">#F43F5E</color>
+    <color name="graph_emotional">#3B82F6</color>
+    <color name="graph_intellectual">#10B981</color>
+    <color name="slider_physical">#FF4081</color>
+    <color name="slider_emotional">#448AFF</color>
+    <color name="slider_intellectual">#00E676</color>
+
+    <!-- 내비게이션 배경 -->
+    <color name="nav_background">#121212</color>
+</resources>

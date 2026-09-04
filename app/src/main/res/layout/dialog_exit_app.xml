@@ -6,7 +6,7 @@
     android:layout_marginHorizontal="24dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="8dp"
-    app:cardBackgroundColor="#F4F5F7">
+    app:cardBackgroundColor="@color/surface_bright_variant">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="앱을 종료할까요?"
-                android:textColor="#000000"
+                android:textColor="@color/on_surface_light"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -34,14 +34,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:text="언제든 다시 확인할 수 있어요"
-                android:textColor="#666666"
+                android:textColor="@color/text_muted"
                 android:textSize="14sp" />
         </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#D8D8D8" />
+            android:background="@color/divider_on_light" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -60,16 +60,16 @@
                 android:stateListAnimator="@null" /> <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="#D8D8D8" />
+            android:background="@color/divider_on_light" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_exit"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="#F4F5F7"
+                android:background="@color/surface_bright_variant"
                 android:text="종료하기"
-                android:textColor="#000000"
+                android:textColor="@color/on_surface_light"
                 android:textSize="16sp"
                 android:stateListAnimator="@null" /> </LinearLayout>
     </LinearLayout>

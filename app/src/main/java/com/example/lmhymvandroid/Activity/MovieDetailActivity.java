@@ -100,6 +100,9 @@ public class MovieDetailActivity extends AppCompatActivity {
         movieService.getMovieDetail(tmdbId).enqueue(new Callback<MovieDetailResponse>() {
             @Override
             public void onResponse(Call<MovieDetailResponse> call, Response<MovieDetailResponse> response) {
+                // 액티비티가 이미 종료/파괴된 뒤 콜백이 도착하면 Glide 등 UI 접근 시 크래시하므로 방어
+                if (isFinishing() || isDestroyed()) return;
+
                 if (response.isSuccessful() && response.body() != null) {
                     // 성공 시: 백엔드 데이터로만 UI 업데이트
                     Log.d("MovieDetail", "API 성공: " + response.body().getMovieTitle());

@@ -15,6 +15,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.lmhymvandroid.DTO.NicknameRequest;
 import com.example.lmhymvandroid.R;
@@ -50,10 +54,27 @@ public class CreateNicknameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_create_nickname);
         authService = RetrofitClient.getClient(this).create(AuthService.class);
 
+        applyImeInsets();
         initViews();
         setupCalendarLogic();
         String missing = getIntent().getStringExtra("MISSING_FIELD");
         if (missing != null) Log.d("HYMV_DEBUG", "누락 필드: " + missing);
+    }
+
+    /**
+     * 엣지 투 엣지로 그리고, 키보드(IME)/하단 시스템 바 인셋을 스크롤 루트의 하단 패딩으로 반영해
+     * 키보드가 입력칸/버튼을 가리지 않게 한다. (상단은 레이아웃의 기존 여백을 유지)
+     */
+    private void applyImeInsets() {
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View root = findViewById(R.id.nickname_root);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(),
+                    Math.max(bars.bottom, ime.bottom));
+            return insets;
+        });
     }
 
     private void initViews() {

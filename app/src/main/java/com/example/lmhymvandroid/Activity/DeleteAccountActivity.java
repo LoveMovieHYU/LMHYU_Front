@@ -100,7 +100,8 @@ public class DeleteAccountActivity extends AppCompatActivity {
             return;
         }
 
-        authService.deleteAccount("Bearer " + token).enqueue(new Callback<Void>() {
+        // 인증 헤더는 AuthInterceptor 가 자동 부착한다
+        authService.deleteAccount().enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {

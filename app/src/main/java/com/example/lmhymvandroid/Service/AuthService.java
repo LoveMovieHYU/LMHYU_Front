@@ -34,12 +34,13 @@ public interface AuthService {
     @POST("/jwt/refresh")
     Call<LoginResponseDTO> requestTokenRefresh(@Header("Authorization-Refresh") String refreshToken);
 
+    // 인증 헤더는 AuthInterceptor 가 자동 부착하므로 수동으로 넘기지 않는다
     @GET("/api/user/")
-    Call<UserResponseDTO> getUserInfo(@Header("Authorization") String accessToken);
+    Call<UserResponseDTO> getUserInfo();
 
     @DELETE("/api/user/")
-    Call<Void> deleteAccount(@Header("Authorization") String accessToken);
+    Call<Void> deleteAccount();
 
     @GET("/api/likes/")
-    Call<List<MovieSummaryResponseDTO>> getFavoriteMovies(@Header("Authorization") String accessToken);
+    Call<List<MovieSummaryResponseDTO>> getFavoriteMovies();
 }

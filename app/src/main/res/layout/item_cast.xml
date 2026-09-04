@@ -10,6 +10,7 @@
         android:id="@+id/iv_cast_profile"
         android:layout_width="60dp"
         android:layout_height="60dp"
+        android:contentDescription="출연진 프로필 사진"
         android:scaleType="centerCrop"
         android:background="@drawable/bg_circle_gray"
         android:src="@android:drawable/ic_menu_camera" />
@@ -23,7 +24,7 @@
         android:maxLines="2"
         android:ellipsize="end"
         android:text="Name"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/on_surface_dark"
         android:textSize="12sp" />
 
     <TextView
@@ -31,6 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Role"
-        android:textColor="#AAAAAA"
+        android:textColor="@color/text_tertiary"
         android:textSize="10sp" />
 </LinearLayout>

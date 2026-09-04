@@ -5,7 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.lmhymvandroid.DTO.ProfileCheckResponseDTO;
 import com.example.lmhymvandroid.R;
@@ -29,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        applyWindowInsets();
+
         tokenManager = new TokenManager(this);
 
         // 구글/네이버 로그인 버튼 설정
@@ -46,6 +54,21 @@ public class LoginActivity extends AppCompatActivity {
         super.onNewIntent(intent);
         setIntent(intent);
         handleDeepLink(intent);
+    }
+
+    /**
+     * 엣지 투 엣지로 그리고, 시스템 바/키보드(IME) 인셋을 하단 패딩으로 반영해
+     * 콘텐츠가 시스템 바나 키보드에 가려지지 않게 한다.
+     */
+    private void applyWindowInsets() {
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View root = findViewById(R.id.login_root);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            v.setPadding(bars.left, bars.top, bars.right, Math.max(bars.bottom, ime.bottom));
+            return insets;
+        });
     }
 
     private void openWebBrowser(String url) {
@@ -68,7 +91,15 @@ public class LoginActivity extends AppCompatActivity {
             String userIdStr = data.getQueryParameter("userId");
 
             if (accessToken != null && refreshToken != null) {
-                int userId = (userIdStr != null) ? Integer.parseInt(userIdStr) : -1;
+                int userId = -1;
+                if (userIdStr != null) {
+                    try {
+                        userId = Integer.parseInt(userIdStr);
+                    } catch (NumberFormatException e) {
+                        Log.e("Login", "userId 파싱 실패: " + userIdStr);
+                        ToastUtil.show(this, "로그인 정보 처리 중 오류가 발생했습니다.");
+                    }
+                }
 
                 // 1. 토큰 즉시 저장
                 tokenManager.saveTokens(accessToken, refreshToken, userId);

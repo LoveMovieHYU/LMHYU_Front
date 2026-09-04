@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0D0D0D"> <LinearLayout
+    android:background="@color/app_background_alt"> <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -11,12 +11,17 @@
 
     <ImageView
         android:id="@+id/btn_close_mypage"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
         android:layout_gravity="end"
+        android:padding="14dp"
+        android:contentDescription="마이페이지 닫기"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_close"
-        android:layout_marginTop="32dp"
-        app:tint="#FFFFFF" />
+        android:layout_marginTop="18dp"
+        app:tint="@color/on_surface_dark" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -29,14 +34,16 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             app:cardCornerRadius="40dp"
-            app:cardBackgroundColor="#E0E0E0"
+            app:cardBackgroundColor="@color/neutral_divider"
             app:cardElevation="0dp">
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="20dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_person"
-                app:tint="#555555" />
+                app:tint="@color/text_on_light_muted" />
         </androidx.cardview.widget.CardView>
 
         <TextView
@@ -45,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:text="닉네임"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/on_surface_dark"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
@@ -60,7 +67,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="내가 좋아요한 영화"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/on_surface_dark"
             android:textSize="16sp" />
 
         <TextView
@@ -69,7 +76,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:text="모두 보기 >"
-            android:textColor="#AAAAAA"
+            android:textColor="@color/text_tertiary"
             android:textSize="14sp" />
     </RelativeLayout>
 
@@ -86,7 +93,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="개인정보 설정"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/on_surface_dark"
         android:textSize="14sp"
         android:layout_marginBottom="12dp"/>
 
@@ -101,8 +108,10 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
             android:src="@drawable/ic_person"
-            app:tint="#888888"/>
+            app:tint="@color/text_secondary"/>
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -113,20 +122,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="개인정보 수정"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/on_surface_dark"
                 android:textSize="16sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="닉네임 변경, 생년월일 변경"
-                android:textColor="#888888"
+                android:textColor="@color/text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
         <ImageView
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
             android:src="@drawable/ic_to_go"
-            app:tint="#888888"/>
+            app:tint="@color/text_secondary"/>
     </LinearLayout>
 
     <TextView
@@ -134,7 +145,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:text="계정 설정"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/on_surface_dark"
         android:textSize="14sp"
         android:layout_marginBottom="12dp"/>
 
@@ -154,8 +165,10 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_logout"
-                app:tint="#888888"/>
+                app:tint="@color/text_secondary"/>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -166,23 +179,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="로그 아웃"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/on_surface_dark"
                     android:textSize="16sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="현재 계정 로그아웃"
-                    android:textColor="#888888"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
             </LinearLayout>
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_to_go"
-                app:tint="#888888"/>
+                app:tint="@color/text_secondary"/>
         </LinearLayout>
 
-        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#333333" android:layout_marginHorizontal="16dp"/>
+        <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/neutral_placeholder" android:layout_marginHorizontal="16dp"/>
 
         <LinearLayout
             android:id="@+id/btn_delete_account"
@@ -194,8 +209,10 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_close"
-                app:tint="#888888"/>
+                app:tint="@color/text_secondary"/>
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -206,20 +223,22 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="계정 탈퇴"
-                    android:textColor="#FF3B30"
+                    android:textColor="@color/danger_red_alt"
                     android:textSize="16sp" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="계정 정보 전체 삭제"
-                    android:textColor="#888888"
+                    android:textColor="@color/text_secondary"
                     android:textSize="12sp" />
             </LinearLayout>
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
                 android:src="@drawable/ic_to_go"
-                app:tint="#888888"/>
+                app:tint="@color/text_secondary"/>
         </LinearLayout>
     </LinearLayout>
 

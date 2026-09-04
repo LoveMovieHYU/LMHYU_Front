@@ -11,6 +11,7 @@
         android:id="@+id/iv_horizontal_poster"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:contentDescription="영화 포스터"
         android:scaleType="centerCrop"
-        android:background="#333333" />
+        android:background="@color/neutral_placeholder" />
 </androidx.cardview.widget.CardView>

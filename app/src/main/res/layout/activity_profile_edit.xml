@@ -1,180 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/profile_edit_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121212"
-    android:padding="20dp">
+    android:background="@color/app_background"
+    android:fillViewport="true">
 
-    <ImageView
-        android:id="@+id/btn_back"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="12dp"
-        android:src="@drawable/ic_back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="32dp"
-        app:tint="#FFFFFF" />
-
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="프로필 수정"
-        android:textColor="#FFFFFF"
-        android:textSize="26sp"
-        android:textStyle="bold"
-
-        app:layout_constraintTop_toTopOf="@id/btn_back"
-        app:layout_constraintBottom_toBottomOf="@id/btn_back"
-
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardProfileImage"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginTop="32dp"
-        app:cardBackgroundColor="#D1D5DC"
-        app:cardCornerRadius="65dp"
-        app:cardElevation="0dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_title"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:padding="20dp">
 
         <ImageView
-            android:id="@+id/ivProfileEdit"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_profile_edit" />
-    </androidx.cardview.widget.CardView>
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:contentDescription="뒤로 가기"
+            android:src="@drawable/ic_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="32dp"
+            app:tint="@color/on_surface_dark" />
 
-    <TextView
-        android:id="@+id/label_nickname"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="닉네임"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardProfileImage" />
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="프로필 수정"
+            android:textColor="@color/on_surface_dark"
+            android:textSize="26sp"
+            android:textStyle="bold"
 
-    <EditText
-        android:id="@+id/et_nickname"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_rounded_white"
-        android:hint="홍길동"
-        android:paddingHorizontal="20dp"
-        android:textColor="#000000"
-        android:inputType="text"
-        android:maxLines="1"
-        app:layout_constraintTop_toBottomOf="@id/label_nickname"/>
+            app:layout_constraintTop_toTopOf="@id/btn_back"
+            app:layout_constraintBottom_toBottomOf="@id/btn_back"
 
-    <TextView
-        android:id="@+id/label_birthdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="생년월일"
-        android:textColor="#FFFFFF"
-        android:textSize="14sp"
-        android:layout_marginTop="24dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_nickname"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_birthdate"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/bg_rounded_white"
-        android:gravity="center_vertical"
-        android:hint="YYYY-MM-DD"
-        android:paddingHorizontal="20dp"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@id/label_birthdate"/>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProfileImage"
+            android:layout_width="130dp"
+            android:layout_height="130dp"
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="@color/avatar_bg"
+            app:cardCornerRadius="65dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    <ImageView
-        android:id="@+id/iv_calendar_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_calendar"
-        android:layout_marginEnd="16dp"
-        app:tint="#888888"
-        app:layout_constraintEnd_toEndOf="@id/tv_birthdate"
-        app:layout_constraintTop_toTopOf="@id/tv_birthdate"
-        app:layout_constraintBottom_toBottomOf="@id/tv_birthdate"/>
+            <ImageView
+                android:id="@+id/ivProfileEdit"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_profile_edit" />
+        </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/calendarCardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:cardCornerRadius="12dp"
-        app:cardElevation="8dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/tv_birthdate"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        <TextView
+            android:id="@+id/label_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="닉네임"
+            android:textColor="@color/on_surface_dark"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardProfileImage" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/et_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_rounded_white"
+            android:hint="홍길동"
+            android:paddingHorizontal="20dp"
+            android:textColor="@color/on_surface_light"
+            android:inputType="text"
+            android:maxLines="1"
+            app:layout_constraintTop_toBottomOf="@id/label_nickname"/>
+
+        <TextView
+            android:id="@+id/label_birthdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="생년월일"
+            android:textColor="@color/on_surface_dark"
+            android:textSize="14sp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_nickname"/>
+
+        <TextView
+            android:id="@+id/tv_birthdate"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/bg_rounded_white"
+            android:gravity="center_vertical"
+            android:hint="YYYY-MM-DD"
+            android:paddingHorizontal="20dp"
+            android:textColor="@color/on_surface_light"
+            android:textSize="16sp"
+            android:clickable="true"
+            android:focusable="true"
+            app:layout_constraintTop_toBottomOf="@id/label_birthdate"/>
+
+        <ImageView
+            android:id="@+id/iv_calendar_icon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:contentDescription="@null"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_calendar"
+            android:layout_marginEnd="16dp"
+            app:tint="@color/text_secondary"
+            app:layout_constraintEnd_toEndOf="@id/tv_birthdate"
+            app:layout_constraintTop_toTopOf="@id/tv_birthdate"
+            app:layout_constraintBottom_toBottomOf="@id/tv_birthdate"/>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/calendarCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
-
-            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-                android:id="@+id/calendarView"
-                android:layout_width="match_parent"
-                android:layout_height="300dp" />
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/tv_birthdate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="end"
-                android:layout_marginTop="8dp">
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                    android:id="@+id/calendarView"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="end"
+                    android:layout_marginTop="8dp">
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/tv_info_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="입력한 생년월일을 기준으로 오늘의 바이오리듬을 분석해요."
-        android:textColor="#F3F4F6"
-        android:background="@drawable/bg_rounded_gray"
-        android:padding="16dp"
-        android:layout_marginTop="16dp"
-        android:textSize="13sp"
-        app:layout_constraintTop_toBottomOf="@id/calendarCardView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <TextView
+            android:id="@+id/tv_info_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="입력한 생년월일을 기준으로 오늘의 바이오리듬을 분석해요."
+            android:textColor="@color/text_offwhite_alt"
+            android:background="@drawable/bg_rounded_gray"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:textSize="13sp"
+            app:layout_constraintTop_toBottomOf="@id/calendarCardView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
-    <android.widget.Button
-        android:id="@+id/btn_save"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:text="저장하기"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:background="@drawable/bg_rounded_navy"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_info_message"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintVertical_bias="0.0"/>
+        <android.widget.Button
+            android:id="@+id/btn_save"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="저장하기"
+            android:textColor="@color/on_surface_dark"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/bg_rounded_navy"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            app:layout_constraintTop_toBottomOf="@id/tv_info_message"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0.0"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

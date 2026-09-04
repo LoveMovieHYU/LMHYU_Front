@@ -1,12 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <!--
+        시맨틱 색 토큰.
+        기본(라이트/default) 값은 기존 레이아웃에 하드코딩돼 있던 hex 를 그대로 옮긴 것으로,
+        default 리소스에서는 화면이 픽셀 단위로 동일하게 유지된다.
+        다크 대응 값은 res/values-night/colors.xml 에 별도 정의한다.
+    -->
+
+    <!-- 기본 흑백/공통 (템플릿 잔재 purple/teal 는 미사용이라 제거) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="loading_gray">#333333</color>
     <color name="red">#FFFF0000</color>
+
+    <!-- ===== 표면(배경) ===== -->
+    <color name="app_background">#121212</color>        <!-- 앱 화면/내비 기본 배경 -->
+    <color name="app_background_alt">#0D0D0D</color>    <!-- 마이페이지 배경 -->
+    <color name="card_dark">#161B22</color>            <!-- 추천 리스트 카드 -->
+    <color name="card_reason_dark">#141925</color>     <!-- 탈퇴 사유 카드 -->
+    <color name="surface_bright">#FFFFFF</color>       <!-- 밝은 카드/다이얼로그/입력창 배경 -->
+    <color name="surface_bright_variant">#F4F5F7</color> <!-- 밝은 폼/다이얼로그/보조 버튼 배경 -->
+
+    <!-- ===== 전경(텍스트/아이콘) ===== -->
+    <color name="on_surface_dark">#FFFFFF</color>      <!-- 어두운 배경 위 흰 텍스트/아이콘 -->
+    <color name="text_offwhite">#F4F5F7</color>        <!-- 어두운 배경 위 오프화이트 텍스트 -->
+    <color name="text_offwhite_alt">#F3F4F6</color>    <!-- 회색 박스 위 오프화이트 텍스트 -->
+    <color name="on_surface_light">#000000</color>     <!-- 밝은 표면 위 검은 텍스트 -->
+    <color name="on_card_title">#111111</color>        <!-- 밝은 카드 제목 텍스트 -->
+    <color name="on_card_dark">#1A202C</color>         <!-- 밝은 바이오 카드 위 진한 텍스트 -->
+    <color name="text_secondary">#888888</color>       <!-- 어두운 배경 보조 텍스트 -->
+    <color name="text_tertiary">#AAAAAA</color>        <!-- 어두운 배경 3차 텍스트 -->
+    <color name="text_muted">#666666</color>           <!-- 흐린 텍스트 -->
+    <color name="text_hint">#999999</color>            <!-- 입력창 힌트 -->
+    <color name="text_detail_meta">#BBBBBB</color>     <!-- 상세 메타 텍스트 -->
+    <color name="text_detail_label">#DDDDDD</color>    <!-- 상세 라벨 텍스트 -->
+    <color name="text_on_light_muted">#555555</color>  <!-- 밝은 표면 위 흐린 텍스트 -->
+    <color name="text_status">#A0AEC0</color>          <!-- 상태 안내 텍스트 -->
+    <color name="text_caption">#718096</color>         <!-- 카드 캡션 텍스트 -->
+    <color name="text_caption_strong">#4A5568</color>  <!-- 카드 캡션 강조 텍스트 -->
+    <color name="text_subtle">#C9CBD6</color>          <!-- 어두운 배경 미묘한 텍스트 -->
+    <color name="text_gender">#8A8F9E</color>          <!-- 성별 라디오 텍스트 -->
+    <color name="text_on_card_label">#424242</color>   <!-- 밝은 카드 위 라벨 텍스트 -->
+
+    <!-- ===== 브랜드/액션 ===== -->
+    <color name="brand_primary">#141925</color>        <!-- 주요(네이비) 버튼 -->
+    <color name="brand_on_primary">#FFFFFF</color>     <!-- 주요 버튼 위 텍스트 -->
+    <color name="brand_accent">#4A4A8A</color>         <!-- 캘린더 선택 등 강조 네이비 -->
+    <color name="naver_green">#03C75A</color>          <!-- 네이버 브랜드 -->
+    <color name="login_google_bg">#FFFFFF</color>      <!-- 구글 로그인 버튼 배경(브랜드 고정) -->
+    <color name="login_google_text">#000000</color>   <!-- 구글 로그인 버튼 텍스트(브랜드 고정) -->
+    <color name="button_neutral">#A0A0A0</color>       <!-- 보조/취소 버튼 틴트 -->
+
+    <!-- ===== 아웃라인/구분선/스크림 ===== -->
+    <color name="divider_on_dark">#33FFFFFF</color>    <!-- 어두운 배경 구분선 -->
+    <color name="divider_on_light">#D8D8D8</color>     <!-- 밝은 배경 구분선 -->
+    <color name="neutral_divider">#E0E0E0</color>      <!-- 밝은 구분선/비활성 표면 -->
+    <color name="neutral_placeholder">#333333</color>  <!-- 포스터 자리표시 배경 -->
+    <color name="avatar_bg">#D1D5DC</color>            <!-- 프로필 아바타 원 배경 -->
+    <color name="handle_bar">#D1D5DB</color>           <!-- 바텀시트 핸들 -->
+    <color name="scrim">#99000000</color>              <!-- 딤 스크림 -->
+
+    <!-- ===== 에러/좋아요 ===== -->
+    <color name="danger_red">#FF0000</color>           <!-- 위험/삭제 텍스트 -->
+    <color name="danger_red_alt">#FF3B30</color>       <!-- 계정 탈퇴 강조 -->
+
+    <!-- ===== 바이오리듬/그래프/슬라이더 강조 (모드 공통 고정) ===== -->
+    <color name="bio_physical">#FF8A8A</color>
+    <color name="bio_emotional">#8AA4FF</color>
+    <color name="bio_intellectual">#6FCF97</color>
+    <color name="graph_physical">#F43F5E</color>
+    <color name="graph_emotional">#3B82F6</color>
+    <color name="graph_intellectual">#10B981</color>
+    <color name="slider_physical">#FF4081</color>
+    <color name="slider_emotional">#448AFF</color>
+    <color name="slider_intellectual">#00E676</color>
+
+    <!-- 내비게이션 배경 (다크 유지) -->
+    <color name="nav_background">#121212</color>
 </resources>

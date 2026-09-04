@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.lmhymvandroid.DTO.NicknameUpdateRequest;
 import com.example.lmhymvandroid.DTO.UserResponseDTO;
@@ -49,6 +53,8 @@ public class ProfileEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
 
+        applyImeInsets();
+
         tokenManager = new TokenManager(this);
         authService = RetrofitClient.getClient(this).create(AuthService.class);
 
@@ -58,6 +64,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         calendarView = findViewById(R.id.calendarView);
 
         setupCalendarLogic();
+        // (applyImeInsets 는 onCreate 에서 호출)
 
         etNickname.addTextChangedListener(new TextWatcher() {
             @Override
@@ -106,6 +113,22 @@ public class ProfileEditActivity extends AppCompatActivity {
         loadCurrentUserInfo();
     }
 
+    /**
+     * 엣지 투 엣지로 그리고, 키보드(IME)/하단 시스템 바 인셋을 스크롤 루트의 하단 패딩으로 반영해
+     * 키보드가 입력칸/버튼을 가리지 않게 한다. (상단은 레이아웃의 기존 여백을 유지)
+     */
+    private void applyImeInsets() {
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        View root = findViewById(R.id.profile_edit_root);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(),
+                    Math.max(bars.bottom, ime.bottom));
+            return insets;
+        });
+    }
+
     private void setupCalendarLogic() {
         calendarView.setTitleFormatter(day -> String.format(Locale.KOREA, "%d년 %02d월", day.getYear(), day.getMonth() + 1));
         calendarView.setOnTitleClickListener(view -> showYearMonthPicker());
@@ -149,7 +172,8 @@ public class ProfileEditActivity extends AppCompatActivity {
         String token = tokenManager.getAccessToken();
         if (token == null) return;
 
-        authService.getUserInfo("Bearer " + token).enqueue(new Callback<UserResponseDTO>() {
+        // 인증 헤더는 AuthInterceptor 가 자동 부착한다
+        authService.getUserInfo().enqueue(new Callback<UserResponseDTO>() {
             @Override
             public void onResponse(Call<UserResponseDTO> call, Response<UserResponseDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {

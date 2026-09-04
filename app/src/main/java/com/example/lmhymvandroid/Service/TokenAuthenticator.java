@@ -25,7 +25,8 @@ public class TokenAuthenticator implements Authenticator {
 
     public TokenAuthenticator(Context context, AuthService authService, TokenManager tokenManager) {
         this.context = context;
-        this.tokenManager = new TokenManager(context);
+        // 주입받은 tokenManager 를 그대로 사용한다 (불필요한 재생성 제거)
+        this.tokenManager = tokenManager;
         this.authService = authService;
     }
 
@@ -48,7 +49,11 @@ public class TokenAuthenticator implements Authenticator {
         if (refreshResponse.isSuccessful() && refreshResponse.body() != null) {
             LoginResponseDTO newTokens = refreshResponse.body();
 
-            tokenManager.updateTokens(newTokens.getAccessToken(), newTokens.getRefreshToken());
+            // 응답에 refresh 토큰이 없으면 기존 저장값을 유지하고, 새 값이 있을 때만 갱신한다
+            String newRefreshToken = newTokens.getRefreshToken() != null
+                    ? newTokens.getRefreshToken()
+                    : refreshToken;
+            tokenManager.updateTokens(newTokens.getAccessToken(), newRefreshToken);
             return response.request().newBuilder()
                     .header("Authorization", "Bearer " + newTokens.getAccessToken())
                     .build();

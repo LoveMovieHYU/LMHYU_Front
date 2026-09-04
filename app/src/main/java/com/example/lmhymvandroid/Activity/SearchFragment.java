@@ -103,7 +103,7 @@ public class SearchFragment extends Fragment {
         String keyword = etSearchInput.getText().toString().trim();
 
         if (keyword.isEmpty()) {
-            ToastUtil.show(getContext(), "검색어를 입력해주세요.");
+            ToastUtil.showSnackbar(getView(), "검색어를 입력해주세요.");
             return;
         }
 
@@ -116,6 +116,8 @@ public class SearchFragment extends Fragment {
         movieService.searchMovies(keyword, 1).enqueue(new Callback<List<MovieSearchResponse>>() {
             @Override
             public void onResponse(Call<List<MovieSearchResponse>> call, Response<List<MovieSearchResponse>> response) {
+                // detach 후 콜백이 도착하면 getContext()가 null 이 되어 NPE 발생하므로 방어
+                if (!isAdded() || getContext() == null) return;
 
                 pbSearchLoading.setVisibility(View.GONE);
 
@@ -143,6 +145,8 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onFailure(Call<List<MovieSearchResponse>> call, Throwable t) {
+                // detach 후 콜백이 도착하면 getContext()가 null 이 되어 NPE 발생하므로 방어
+                if (!isAdded() || getContext() == null) return;
 
                 pbSearchLoading.setVisibility(View.GONE);
 
